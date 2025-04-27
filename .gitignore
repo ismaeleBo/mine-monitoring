@@ -1,13 +1,1 @@
-__pycache__/
-*.pyc
-*.pyo
-*.pyd
-venv/
-env/
-ENV/
-bin/
-lib/
-lib64/
-pyvenv.cfg
-.idea/
-*.log
+.DS_Store

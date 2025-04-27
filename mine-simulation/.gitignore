@@ -1,0 +1,14 @@
+# Python
+__pycache__/
+*.pyc
+*.pyo
+*.pyd
+venv/
+env/
+ENV/
+bin/
+lib/
+lib64/
+pyvenv.cfg
+.idea/
+*.log

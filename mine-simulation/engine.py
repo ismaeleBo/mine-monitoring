@@ -59,8 +59,7 @@ class StateEngine:
             'water_quality': 'water-quality',
             'soil_quality': 'land-impact',
             'production': 'production-monitoring',
-            'voc_air': 'air-quality',  # ad esempio VOC può essere gestito da air-quality
-        # Puoi aggiungere altri mapping qui se serve
+            'voc_air': 'air-quality',
         }
         return mapping.get(sensor_type, 'misc')
 

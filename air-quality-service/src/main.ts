@@ -26,7 +26,7 @@ async function bootstrap() {
     transport: Transport.TCP,
     options: {
       host: 'localhost',
-      port: 3001,
+      port: 3002,
     },
   });
 
@@ -47,7 +47,7 @@ async function bootstrap() {
   await app.startAllMicroservices();
   logger.log('Microservizi avviati');
 
-  await app.listen(3001);
-  logger.log(`(air-quality) HTTP server running on port 3001`);
+  await app.listen(3002);
+  logger.log(`(air-quality) HTTP server running on port 3002`);
 }
 bootstrap();

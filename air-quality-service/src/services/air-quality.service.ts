@@ -71,14 +71,27 @@ export class AirQualityService {
       qb.andWhere('reading.location = :location', { location: query.location });
     }
 
-    if (query.startDate) {
+    if (query.startDate && query.endDate) {
+      const startDate = new Date(query.startDate);
+      const endDate = new Date(query.endDate);
+
+      if (startDate.toDateString() === endDate.toDateString()) {
+        startDate.setHours(0, 0, 0, 0);
+        endDate.setHours(23, 59, 59, 999);
+      }
+
+      qb.andWhere('reading.timestamp BETWEEN :startDate AND :endDate', {
+        startDate,
+        endDate,
+      });
+    } else if (query.startDate) {
       qb.andWhere('reading.timestamp >= :startDate', {
         startDate: query.startDate,
       });
-    }
-
-    if (query.endDate) {
-      qb.andWhere('reading.timestamp <= :endDate', { endDate: query.endDate });
+    } else if (query.endDate) {
+      qb.andWhere('reading.timestamp <= :endDate', {
+        endDate: query.endDate,
+      });
     }
 
     const results: AirQualityMeasurement[] = await qb
@@ -96,9 +109,12 @@ export class AirQualityService {
     sensorId?: string,
     location?: string,
   ): Promise<DailyAverageDto[]> {
+    const adjustedEndDate = new Date(endDate);
+    adjustedEndDate.setHours(23, 59, 59, 999);
+
     const qb = this.airQualityRepository
       .createQueryBuilder('reading')
-      .select('DATE(reading.timestamp)', 'date')
+      .select('MIN(reading.timestamp)', 'date')
       .addSelect('AVG(reading.pm25)', 'avgPm25')
       .addSelect('AVG(reading.pm10)', 'avgPm10')
       .addSelect('AVG(reading.no2)', 'avgNo2')
@@ -109,7 +125,7 @@ export class AirQualityService {
       .addSelect('AVG(reading.voc)', 'avgVoc')
       .where('reading.timestamp BETWEEN :startDate AND :endDate', {
         startDate,
-        endDate,
+        endDate: adjustedEndDate,
       });
 
     if (sensorId) {
@@ -121,32 +137,32 @@ export class AirQualityService {
     }
 
     qb.groupBy('DATE(reading.timestamp)').orderBy(
-      'DATE(reading.timestamp)',
+      'MIN(reading.timestamp)',
       'ASC',
     );
 
-    const rawResults: Array<{
+    const rawResults = await qb.getRawMany<{
       date: string;
-      avgPm25: string;
-      avgPm10: string;
-      avgNo2: string;
-      avgCo: string;
-      avgO2: string;
-      avgSo2: string;
-      avgCh4: string;
-      avgVoc: string;
-    }> = await qb.getRawMany();
+      avgPm25: string | null;
+      avgPm10: string | null;
+      avgNo2: string | null;
+      avgCo: string | null;
+      avgO2: string | null;
+      avgSo2: string | null;
+      avgCh4: string | null;
+      avgVoc: string | null;
+    }>();
 
-    return rawResults.map((result) => ({
-      date: result.date,
-      avgPm25: parseFloat(result.avgPm25),
-      avgPm10: parseFloat(result.avgPm10),
-      avgNo2: parseFloat(result.avgNo2),
-      avgCo: parseFloat(result.avgCo),
-      avgO2: parseFloat(result.avgO2),
-      avgSo2: parseFloat(result.avgSo2),
-      avgCh4: parseFloat(result.avgCh4),
-      avgVoc: parseFloat(result.avgVoc),
+    return rawResults.map((row) => ({
+      date: row.date,
+      avgPm25: row.avgPm25 !== null ? parseFloat(row.avgPm25) : undefined,
+      avgPm10: row.avgPm10 !== null ? parseFloat(row.avgPm10) : undefined,
+      avgNo2: row.avgNo2 !== null ? parseFloat(row.avgNo2) : undefined,
+      avgCo: row.avgCo !== null ? parseFloat(row.avgCo) : undefined,
+      avgO2: row.avgO2 !== null ? parseFloat(row.avgO2) : undefined,
+      avgSo2: row.avgSo2 !== null ? parseFloat(row.avgSo2) : undefined,
+      avgCh4: row.avgCh4 !== null ? parseFloat(row.avgCh4) : undefined,
+      avgVoc: row.avgVoc !== null ? parseFloat(row.avgVoc) : undefined,
     }));
   }
 }

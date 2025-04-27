@@ -5,9 +5,9 @@ import {
   Body,
   Param,
   Query,
-  HttpStatus,
-  HttpException,
   BadRequestException,
+  HttpException,
+  HttpStatus,
 } from '@nestjs/common';
 import { ApiTags, ApiOperation, ApiResponse } from '@nestjs/swagger';
 import { MessagePattern, Payload } from '@nestjs/microservices';
@@ -23,13 +23,11 @@ import { AirQualityQueryParamsDto } from '../dto/query-params.dto';
 export class AirQualityController {
   constructor(private readonly airQualityService: AirQualityService) {}
 
-  // === API HTTP ===
-
   @Post()
-  @ApiOperation({ summary: 'Record a new air quality reading.' })
+  @ApiOperation({ summary: 'Create a new air quality reading' })
   @ApiResponse({
     status: 201,
-    description: 'Reading saved successfully',
+    description: 'Reading created successfully',
     type: AirQualityResponseDto,
   })
   async createReading(
@@ -39,7 +37,7 @@ export class AirQualityController {
   }
 
   @Get('/:id')
-  @ApiOperation({ summary: 'Retrieve a reading by ID' })
+  @ApiOperation({ summary: 'Get a reading by its ID' })
   @ApiResponse({
     status: 200,
     description: 'Reading found',
@@ -60,7 +58,7 @@ export class AirQualityController {
   @ApiOperation({ summary: 'Search readings by filters' })
   @ApiResponse({
     status: 200,
-    description: 'Letture trovate',
+    description: 'Readings retrieved successfully',
     type: [AirQualityResponseDto],
   })
   async search(
@@ -70,12 +68,10 @@ export class AirQualityController {
   }
 
   @Get('/stats/daily-average')
-  @ApiOperation({
-    summary: 'Retrieve daily air quality averages.',
-  })
+  @ApiOperation({ summary: 'Retrieve daily air quality averages' })
   @ApiResponse({
     status: 200,
-    description: 'Calculated daily averages',
+    description: 'Daily averages calculated successfully',
     type: [DailyAverageDto],
   })
   async getDailyAverages(
@@ -85,21 +81,27 @@ export class AirQualityController {
     @Query('location') location?: string,
   ): Promise<DailyAverageDto[]> {
     if (!startDate || !endDate) {
-      throw new BadRequestException('startDate and endDate are mandatory');
+      throw new BadRequestException('startDate and endDate are required');
     }
 
-    const start = new Date(startDate);
-    const end = new Date(endDate);
+    const parsedStartDate = new Date(startDate);
+    const parsedEndDate = new Date(endDate);
+
+    if (isNaN(parsedStartDate.getTime()) || isNaN(parsedEndDate.getTime())) {
+      throw new BadRequestException(
+        'Invalid date format for startDate or endDate',
+      );
+    }
 
     return this.airQualityService.getDailyAverages(
-      start,
-      end,
+      parsedStartDate,
+      parsedEndDate,
       sensorId,
       location,
     );
   }
 
-  // === MICROSERVICES PATTERNS ===
+  // === MICROSERVICE PATTERNS ===
 
   @MessagePattern({ cmd: 'get_reading' })
   async getReadingByIdMicroservice(
@@ -113,5 +115,32 @@ export class AirQualityController {
     @Payload() query: AirQualityQueryParamsDto,
   ): Promise<AirQualityResponseDto[]> {
     return this.airQualityService.search(query);
+  }
+
+  @MessagePattern({ cmd: 'get_daily_averages' })
+  async getDailyAveragesMicroservice(
+    @Payload()
+    payload: {
+      startDate: string;
+      endDate: string;
+      sensorId?: string;
+      location?: string;
+    },
+  ): Promise<DailyAverageDto[]> {
+    const { startDate, endDate, sensorId, location } = payload;
+
+    const start = new Date(startDate);
+    const end = new Date(endDate);
+
+    if (isNaN(start.getTime()) || isNaN(end.getTime())) {
+      throw new BadRequestException('Invalid startDate or endDate format');
+    }
+
+    return this.airQualityService.getDailyAverages(
+      start,
+      end,
+      sensorId,
+      location,
+    );
   }
 }

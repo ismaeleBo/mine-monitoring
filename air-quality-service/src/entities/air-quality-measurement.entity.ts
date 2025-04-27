@@ -3,56 +3,56 @@ import { ApiProperty } from '@nestjs/swagger';
 
 @Entity({ name: 'air_quality_measurements' })
 export class AirQualityMeasurement {
-  @ApiProperty({ description: 'ID univoco della misurazione' })
+  @ApiProperty({ description: 'Unique measurement ID' })
   @PrimaryGeneratedColumn()
   id!: number;
 
   @ApiProperty({
-    description: 'ID del sensore che ha effettuato la misurazione',
+    description: 'ID of the sensor that took the measurement',
   })
   @Column()
   sensorId!: string;
 
-  @ApiProperty({ description: 'Timestamp della misurazione (UTC)' })
+  @ApiProperty({ description: 'Timestamp of the measurement (UTC)' })
   @Column({ type: 'timestamp' })
   timestamp!: Date;
 
-  @ApiProperty({ description: 'Identificativo della zona della miniera' })
+  @ApiProperty({ description: 'Identification of the mine area' })
   @Column()
   location!: string;
 
   @ApiProperty({
-    description: 'Concentrazione PM2.5 in µg/m³',
+    description: 'PM2.5 concentration in µg/m³',
     required: false,
   })
   @Column('float', { nullable: true })
   pm25!: number | null;
 
-  @ApiProperty({ description: 'Concentrazione PM10 in µg/m³', required: false })
+  @ApiProperty({ description: 'PM10 concentration in µg/m³', required: false })
   @Column('float', { nullable: true })
   pm10!: number | null;
 
-  @ApiProperty({ description: 'Concentrazione NO2 in ppb', required: false })
+  @ApiProperty({ description: 'NO2 concentration in ppb', required: false })
   @Column('float', { nullable: true })
   no2!: number | null;
 
-  @ApiProperty({ description: 'Concentrazione CO in ppm', required: false })
+  @ApiProperty({ description: 'CO concentration in ppm', required: false })
   @Column('float', { nullable: true })
   co!: number | null;
 
-  @ApiProperty({ description: 'Percentuale di O2 (%)', required: false })
+  @ApiProperty({ description: 'Percentage of O2 (%)', required: false })
   @Column('float', { nullable: true })
   o2!: number | null;
 
-  @ApiProperty({ description: 'Concentrazione SO2 in ppb', required: false })
+  @ApiProperty({ description: 'SO2 concentration in ppb', required: false })
   @Column('float', { nullable: true })
   so2!: number | null;
 
-  @ApiProperty({ description: 'Percentuale di CH4 (%)', required: false })
+  @ApiProperty({ description: 'Percentage of CH4 (%)', required: false })
   @Column('float', { nullable: true })
   ch4!: number | null;
 
-  @ApiProperty({ description: 'Concentrazione VOC in ppb', required: false })
+  @ApiProperty({ description: 'VOC concentration in ppb', required: false })
   @Column('float', { nullable: true })
   voc!: number | null;
 }

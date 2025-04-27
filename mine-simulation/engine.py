@@ -31,7 +31,7 @@ class StateEngine:
                 intensity=random.uniform(1.2, 2.0),
                 impacted_parameters={
                     "PM2_5": 2.5,
-                    "voc_air_concentration": 3.0
+                    "VOC": 3.0
                 }
             )
             zone.trigger_event(event)

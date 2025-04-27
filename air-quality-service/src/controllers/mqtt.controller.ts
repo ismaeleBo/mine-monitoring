@@ -17,7 +17,7 @@ interface RawAirQualityMessage {
     O2?: number;
     SO2?: number;
     CH4?: number;
-    voc_air_concentration?: number;
+    VOC?: number;
   };
 }
 
@@ -31,7 +31,7 @@ export class MqttController implements OnModuleInit {
   ) {}
 
   onModuleInit() {
-    // Subscribe al topic
+    // Subscribe to topic
     this.mqttService.subscribe(
       'mining/air-quality/readings/#',
       (topic: string, message: Buffer) => {
@@ -44,7 +44,7 @@ export class MqttController implements OnModuleInit {
     topic: string,
     message: Buffer,
   ): Promise<void> {
-    this.logger.log(`[MQTT] Ricevuto messaggio su topic: ${topic}`);
+    this.logger.log(`[MQTT] Message received on topic: ${topic}`);
     try {
       const rawPayload = JSON.parse(message.toString()) as RawAirQualityMessage;
 
@@ -59,10 +59,10 @@ export class MqttController implements OnModuleInit {
         o2: rawPayload.values.O2 ?? null,
         so2: rawPayload.values.SO2 ?? null,
         ch4: rawPayload.values.CH4 ?? null,
-        voc: rawPayload.values.voc_air_concentration ?? null,
+        voc: rawPayload.values.VOC ?? null,
       };
 
-      // Validazione DTO
+      // DTO Validation
       const dtoInstance = plainToInstance(
         AirQualityReadingDto,
         normalizedPayload,
@@ -71,13 +71,11 @@ export class MqttController implements OnModuleInit {
 
       const saved = await this.airQualityService.createReading(dtoInstance);
 
-      this.logger.log(`[MQTT] Lettura registrata: ID=${saved.id}`);
+      this.logger.log(`[MQTT] Reading registered with ID=${saved.id}`);
     } catch (error: unknown) {
       const errorMessage =
         error instanceof Error ? error.message : 'Errore sconosciuto';
-      this.logger.error(
-        `[MQTT] Errore nell'elaborazione del messaggio: ${errorMessage}`,
-      );
+      this.logger.error(`[MQTT] Error reading message: ${errorMessage}`);
     }
   }
 }

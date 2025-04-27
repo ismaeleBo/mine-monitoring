@@ -26,10 +26,10 @@ export class AirQualityController {
   // === API HTTP ===
 
   @Post()
-  @ApiOperation({ summary: "Registra una nuova lettura di qualità dell'aria" })
+  @ApiOperation({ summary: 'Record a new air quality reading.' })
   @ApiResponse({
     status: 201,
-    description: 'Lettura salvata con successo',
+    description: 'Reading saved successfully',
     type: AirQualityResponseDto,
   })
   async createReading(
@@ -39,25 +39,25 @@ export class AirQualityController {
   }
 
   @Get('/:id')
-  @ApiOperation({ summary: 'Recupera una lettura per ID' })
+  @ApiOperation({ summary: 'Retrieve a reading by ID' })
   @ApiResponse({
     status: 200,
-    description: 'Lettura trovata',
+    description: 'Reading found',
     type: AirQualityResponseDto,
   })
-  @ApiResponse({ status: 404, description: 'Lettura non trovata' })
+  @ApiResponse({ status: 404, description: 'Reading not found' })
   async getReadingById(
     @Param('id') id: string,
   ): Promise<AirQualityResponseDto> {
     const reading = await this.airQualityService.getReadingById(id);
     if (!reading) {
-      throw new HttpException('Lettura non trovata', HttpStatus.NOT_FOUND);
+      throw new HttpException('Reading not found', HttpStatus.NOT_FOUND);
     }
     return reading;
   }
 
   @Get()
-  @ApiOperation({ summary: 'Cerca letture tramite filtri' })
+  @ApiOperation({ summary: 'Search readings by filters' })
   @ApiResponse({
     status: 200,
     description: 'Letture trovate',
@@ -71,11 +71,11 @@ export class AirQualityController {
 
   @Get('/stats/daily-average')
   @ApiOperation({
-    summary: "Recupera le medie giornaliere della qualità dell'aria",
+    summary: 'Retrieve daily air quality averages.',
   })
   @ApiResponse({
     status: 200,
-    description: 'Medie giornaliere calcolate',
+    description: 'Calculated daily averages',
     type: [DailyAverageDto],
   })
   async getDailyAverages(
@@ -85,7 +85,7 @@ export class AirQualityController {
     @Query('location') location?: string,
   ): Promise<DailyAverageDto[]> {
     if (!startDate || !endDate) {
-      throw new BadRequestException('startDate e endDate sono obbligatori');
+      throw new BadRequestException('startDate and endDate are mandatory');
     }
 
     const start = new Date(startDate);

@@ -3,19 +3,19 @@ import { IsOptional, IsString, IsDate } from 'class-validator';
 import { Transform } from 'class-transformer';
 
 export class AirQualityQueryParamsDto {
-  @ApiPropertyOptional({ description: 'ID del sensore' })
+  @ApiPropertyOptional({ description: 'Sensor ID' })
   @IsOptional()
   @IsString()
   sensorId?: string;
 
   @ApiPropertyOptional({
-    description: 'Identificativo della zona (es. openpit-sector)',
+    description: 'Zone identifier (e.g., openpit-sector)',
   })
   @IsOptional()
   @IsString()
   location?: string;
 
-  @ApiPropertyOptional({ description: 'Data di inizio (ISO 8601)' })
+  @ApiPropertyOptional({ description: 'Start date (ISO 8601)' })
   @IsOptional()
   @Transform(({ value }: { value: string }) => new Date(value), {
     toClassOnly: true,
@@ -23,7 +23,7 @@ export class AirQualityQueryParamsDto {
   @IsDate()
   startDate?: Date;
 
-  @ApiPropertyOptional({ description: 'Data di fine (ISO 8601)' })
+  @ApiPropertyOptional({ description: 'End Date (ISO 8601)' })
   @IsOptional()
   @Transform(({ value }: { value: string }) => new Date(value), {
     toClassOnly: true,

@@ -10,7 +10,7 @@ async function bootstrap() {
 
   const app = await NestFactory.create(AppModule);
 
-  // Configurazione del microservizio MQTT per comunicare con i dispositivi IoT
+  // Configuring the MQTT microservice to communicate with IoT devices
   app.connectMicroservice<MicroserviceOptions>({
     transport: Transport.MQTT,
     options: {
@@ -21,7 +21,7 @@ async function bootstrap() {
     },
   });
 
-  // Configurazione del microservizio TCP per comunicare con l'API Gateway
+  // Configuring the TCP microservice to communicate with the Gateway API
   app.connectMicroservice<MicroserviceOptions>({
     transport: Transport.TCP,
     options: {
@@ -30,10 +30,10 @@ async function bootstrap() {
     },
   });
 
-  // Configurazione validazione DTO globale
+  // Global DTO validation configuration
   app.useGlobalPipes(new ValidationPipe({ whitelist: true, transform: true }));
 
-  // Configurazione Swagger per documentazione API
+  // Swagger configuration for API documentation
   const config = new DocumentBuilder()
     .setTitle('Air Quality Monitoring API')
     .setDescription("API per il monitoraggio della qualità dell'aria")
@@ -44,12 +44,10 @@ async function bootstrap() {
   const document = SwaggerModule.createDocument(app, config);
   SwaggerModule.setup('api', app, document);
 
-  // Avvio microservizi
   await app.startAllMicroservices();
   logger.log('Microservizi avviati');
 
-  // Avvio server HTTP
   await app.listen(3001);
-  logger.log(`(air-quality) Server HTTP avviato sulla porta 3001`);
+  logger.log(`(air-quality) HTTP server running on port 3001`);
 }
 bootstrap();

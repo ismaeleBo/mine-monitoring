@@ -18,7 +18,7 @@ import { AirQualityMeasurement } from 'src/entities/air-quality-measurement.enti
         entities: [AirQualityMeasurement],
         synchronize: true,
         ssl: {
-          rejectUnauthorized: false, // ⚡ così non devi preoccuparti di caricare manualmente i certificati RDS in sviluppo
+          rejectUnauthorized: false,
         },
       }),
     }),

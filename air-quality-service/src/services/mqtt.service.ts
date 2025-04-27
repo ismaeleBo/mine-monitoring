@@ -21,12 +21,12 @@ export class MqttService {
     });
 
     this.client.on('connect', () => {
-      console.log('[MQTT] Connesso al broker:', url);
+      console.log('[MQTT] Connected to broker:', url);
       this.resolveReady();
     });
 
     this.client.on('error', (err) => {
-      console.error('[MQTT] Errore:', err.message);
+      console.error('[MQTT] Error:', err.message);
     });
   }
 
@@ -34,7 +34,7 @@ export class MqttService {
     topic: string,
     handler: (topic: string, message: Buffer) => void,
   ): Promise<void> {
-    await this.clientReady; // 🔥 Ora aspettiamo che il client sia davvero pronto!
+    await this.clientReady;
 
     this.client.subscribe(topic, (err) => {
       if (err) {
@@ -48,12 +48,6 @@ export class MqttService {
     });
 
     this.client.on('message', (receivedTopic, message) => {
-      console.log(
-        '[MQTT] 🔥 Ricevuto messaggio grezzo:',
-        receivedTopic,
-        message.toString(),
-      );
-
       if (mqttMatchTopic(topic, receivedTopic)) {
         handler(receivedTopic, message);
       }
@@ -61,7 +55,6 @@ export class MqttService {
   }
 }
 
-// Funzione di matching dei topic MQTT
 function mqttMatchTopic(
   subscriptionTopic: string,
   receivedTopic: string,

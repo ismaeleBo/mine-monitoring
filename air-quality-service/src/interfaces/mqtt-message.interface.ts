@@ -51,7 +51,6 @@ export interface MqttCalibrationResponse {
   timestamp: string; // ISO 8601 formatted date
 }
 
-// Aggiungiamo una classe di utility per convertire i messaggi MQTT nei nostri DTO
 export class MqttMessageConverter {
   static toAirQualityReadingDto(mqttMessage: MqttAirQualityReading): any {
     return {

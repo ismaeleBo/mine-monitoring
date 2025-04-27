@@ -70,38 +70,25 @@ export function AirQualityDashboard() {
           </div>
         </CardHeader>
 
-        {loading && (
-          <div className="flex h-[200px] items-center justify-center">
-            <Loader2 className="h-6 w-6 animate-spin text-muted-foreground" />
-          </div>
-        )}
-
         {!dateRange && (
           <div className="flex h-[300px] items-center justify-center text-muted-foreground">
-            Selezionare un intervallo di tempo per visualizzare i dati
+            Select a time interval to view data
           </div>
         )}
 
-        {dateRange && error && (
+        {dateRange && error && !loading && (
           <Alert variant="destructive" className="h-[300px] flex items-center">
             <AlertTriangle className="h-4 w-4" />
-            <AlertTitle>Errore</AlertTitle>
+            <AlertTitle>Error</AlertTitle>
             <AlertDescription>{error}</AlertDescription>
           </Alert>
         )}
 
-        {!error &&
-          !loading &&
-          (!historicalData.length ||
-            historicalData.every(
-              (d) =>
-                Object.values(d).filter((v) => typeof v === "number").length ===
-                0
-            )) && (
-            <div className="flex h-[300px] items-center justify-center text-muted-foreground">
-              Nessun dato disponibile per l'intervallo selezionato
-            </div>
-          )}
+        {!error && !loading && !historicalData.length && (
+          <div className="flex h-[300px] items-center justify-center text-muted-foreground">
+            No data available for the selected interval{" "}
+          </div>
+        )}
 
         {!error && historicalData.length > 0 && (
           <CardContent>

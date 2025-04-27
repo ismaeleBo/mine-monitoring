@@ -27,7 +27,6 @@ const COLORS = [
 ];
 
 export function SimpleLineChart({
-  title = "Line Chart",
   data,
   dataKeys = ["value"],
   unit = "",
@@ -94,7 +93,6 @@ export function SimpleLineChart({
 }
 
 export function SimpleBarChart({
-  title = "Bar Chart",
   data,
   dataKeys = ["value"],
   unit = "",
@@ -162,7 +160,6 @@ export function SimpleBarChart({
 
 // PIE CHART
 export function SimplePieChart({
-  title = "Pie Chart",
   data,
 }: {
   title?: string;

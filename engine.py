@@ -5,6 +5,7 @@ from event import Event
 from operation import Operation
 import paho.mqtt.client as mqtt
 from alarm_manager import AlarmManager
+import json
 
 class StateEngine:
     def __init__(self, tick_interval=5, broker_address="localhost", broker_port=1883, site_id="site-a"):
@@ -51,6 +52,18 @@ class StateEngine:
             zone.trigger_operation(operation)
             print(f"[OPERATION] Operazione '{operation.operation_type}' avviata su zona {zone.zone_id}")
 
+    def get_service_prefix(self, sensor_type):
+        """Restituisce il prefisso del servizio in base al tipo di sensore"""
+        mapping = {
+            'air_quality': 'air-quality',
+            'water_quality': 'water-quality',
+            'soil_quality': 'land-impact',
+            'production': 'production-monitoring',
+            'voc_air': 'air-quality',  # ad esempio VOC può essere gestito da air-quality
+        # Puoi aggiungere altri mapping qui se serve
+        }
+        return mapping.get(sensor_type, 'misc')
+
     def update_world(self):
         """Esegue un ciclo di aggiornamento completo"""
         self.global_time = datetime.datetime.utcnow()
@@ -62,8 +75,9 @@ class StateEngine:
             zone.resolve_events()
             packets = zone.update_sensors()
             for packet in packets:
-                topic = f"mining/{self.site_id}/{packet['location']}/{packet['type']}/{packet['sensor_id']}"
-                message = str(packet)
+                service_prefix = self.get_service_prefix(packet['type'])
+                topic = f"mining/{service_prefix}/readings/{self.site_id}/{packet['location']}/{packet['sensor_id']}"
+                message = json.dumps(packet)
                 self.mqtt_client.publish(topic, message)
                 print(f"[PUBLISH] {topic} -> {message}")
                 self.alarm_manager.evaluate(packet)

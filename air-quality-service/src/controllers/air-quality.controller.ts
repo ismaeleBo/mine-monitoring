@@ -101,6 +101,25 @@ export class AirQualityController {
     );
   }
 
+  @Get('/stats/daily-measurements')
+  @ApiOperation({ summary: 'Get all measurements for a specific day' })
+  @ApiResponse({ status: 200, description: 'Measurements fetched' })
+  async getDailyMeasurements(
+    @Query('date') dateStr: string,
+    @Query('location') location?: string,
+  ) {
+    if (!dateStr) {
+      throw new BadRequestException('date is required');
+    }
+
+    const date = new Date(dateStr);
+    if (isNaN(date.getTime())) {
+      throw new BadRequestException('Invalid date format');
+    }
+
+    return this.airQualityService.getDailyMeasurements(date, location);
+  }
+
   // === MICROSERVICE PATTERNS ===
 
   @MessagePattern({ cmd: 'get_reading' })
@@ -142,5 +161,13 @@ export class AirQualityController {
       sensorId,
       location,
     );
+  }
+
+  @MessagePattern({ cmd: 'get_daily_measurements' })
+  async getDailyMeasurementsMicroservice(
+    @Payload() payload: { date: string; location?: string },
+  ) {
+    const date = new Date(payload.date);
+    return this.airQualityService.getDailyMeasurements(date, payload.location);
   }
 }

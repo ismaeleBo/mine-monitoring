@@ -165,4 +165,56 @@ export class AirQualityService {
       avgVoc: row.avgVoc !== null ? parseFloat(row.avgVoc) : undefined,
     }));
   }
+
+  async getDailyMeasurements(
+    date: Date,
+    location?: string,
+  ): Promise<
+    {
+      timestamp: Date;
+      location: string;
+      sensorId: string;
+      pm25?: number;
+      pm10?: number;
+      no2?: number;
+      co?: number;
+      o2?: number;
+      so2?: number;
+      ch4?: number;
+      voc?: number;
+    }[]
+  > {
+    const startOfDay = new Date(date);
+    startOfDay.setHours(0, 0, 0, 0);
+
+    const endOfDay = new Date(date);
+    endOfDay.setHours(23, 59, 59, 999);
+
+    const qb = this.airQualityRepository
+      .createQueryBuilder('reading')
+      .where('reading.timestamp BETWEEN :startOfDay AND :endOfDay', {
+        startOfDay,
+        endOfDay,
+      });
+
+    if (location) {
+      qb.andWhere('reading.location = :location', { location });
+    }
+
+    const results = await qb.orderBy('reading.timestamp', 'ASC').getMany();
+
+    return results.map((reading) => ({
+      timestamp: reading.timestamp,
+      location: reading.location,
+      sensorId: reading.sensorId,
+      pm25: reading.pm25 ?? undefined,
+      pm10: reading.pm10 ?? undefined,
+      no2: reading.no2 ?? undefined,
+      co: reading.co ?? undefined,
+      o2: reading.o2 ?? undefined,
+      so2: reading.so2 ?? undefined,
+      ch4: reading.ch4 ?? undefined,
+      voc: reading.voc ?? undefined,
+    }));
+  }
 }

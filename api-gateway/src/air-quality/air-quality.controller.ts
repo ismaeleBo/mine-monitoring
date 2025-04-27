@@ -5,14 +5,16 @@ import {
   Query,
   Inject,
   BadRequestException,
+  InternalServerErrorException,
 } from '@nestjs/common';
 import { ClientProxy } from '@nestjs/microservices';
 import { firstValueFrom } from 'rxjs';
-import { ApiTags, ApiOperation, ApiResponse } from '@nestjs/swagger';
+import { ApiTags, ApiOperation, ApiResponse, ApiQuery } from '@nestjs/swagger';
 
 import { AirQualityResponseDto } from './dto/air-quality-response.dto';
 import { AirQualityQueryParamsDto } from './dto/query-params.dto';
 import { DailyAverageDto } from './dto/daily-average.dto';
+import { DailyMeasurementsResponse } from './dto/daily-measurements-response.dto';
 
 @ApiTags('air-quality')
 @Controller('air-quality')
@@ -54,6 +56,26 @@ export class AirQualityController {
   @Get('/stats/daily-average')
   @ApiOperation({ summary: 'Get daily averages for air quality parameters' })
   @ApiResponse({ status: 200, type: [DailyAverageDto] })
+  @ApiQuery({
+    name: 'startDate',
+    required: true,
+    description: 'Start date (YYYY-MM-DD)',
+  })
+  @ApiQuery({
+    name: 'endDate',
+    required: true,
+    description: 'End date (YYYY-MM-DD)',
+  })
+  @ApiQuery({
+    name: 'sensorId',
+    required: false,
+    description: 'Optional sensor ID filter',
+  })
+  @ApiQuery({
+    name: 'location',
+    required: false,
+    description: 'Optional location filter',
+  })
   async getDailyAverages(
     @Query('startDate') startDate: string,
     @Query('endDate') endDate: string,
@@ -80,5 +102,52 @@ export class AirQualityController {
         params,
       ),
     );
+  }
+
+  @Get('/stats/daily-measurements')
+  @ApiOperation({
+    summary: 'Get all air quality measurements for a specific day',
+  })
+  @ApiResponse({ status: 200, type: [DailyMeasurementsResponse] })
+  @ApiQuery({
+    name: 'date',
+    required: true,
+    description: 'Date to filter (YYYY-MM-DD)',
+  })
+  @ApiQuery({
+    name: 'location',
+    required: false,
+    description: 'Optional location filter',
+  })
+  async getDailyMeasurements(
+    @Query('date') dateStr: string,
+    @Query('location') location?: string,
+  ): Promise<DailyMeasurementsResponse[]> {
+    if (!dateStr) {
+      throw new BadRequestException('The "date" query parameter is required.');
+    }
+
+    const parsedDate = new Date(dateStr);
+
+    if (isNaN(parsedDate.getTime())) {
+      throw new BadRequestException(
+        'Invalid "date" format. Expected YYYY-MM-DD.',
+      );
+    }
+
+    const response = await firstValueFrom(
+      this.airQualityClient.send<DailyMeasurementsResponse[]>(
+        { cmd: 'get_daily_measurements' },
+        { date: parsedDate.toISOString(), location },
+      ),
+    );
+
+    if (!response) {
+      throw new InternalServerErrorException(
+        'No data received from Air Quality Microservice.',
+      );
+    }
+
+    return response;
   }
 }

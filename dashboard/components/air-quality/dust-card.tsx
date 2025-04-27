@@ -10,6 +10,7 @@ import {
 import { Loader2 } from "lucide-react";
 import { SimpleBarChart, SimpleLineChart } from "@/components/dashboard-charts";
 import { ChartData, ChartType } from "@/lib/types/common";
+import { useMemo } from "react";
 
 interface DustCardProps {
   loading: boolean;
@@ -27,6 +28,21 @@ export function DustCard({
   isSingleDay,
 }: DustCardProps) {
   if (!isSingleDay && !averageDust) {
+    return;
+  }
+
+  const filteredData = useMemo(() => {
+    const filteredPM10 = historicalData.filter(
+      (item) => item.pm10 !== undefined
+    );
+    const filteredPM25 = historicalData.filter(
+      (item) => item.pm25 !== undefined
+    );
+
+    return filteredPM10.concat(filteredPM25);
+  }, [historicalData]);
+
+  if (isSingleDay && !filteredData.length) {
     return;
   }
   return (
@@ -49,7 +65,7 @@ export function DustCard({
               {chartType === "line" ? (
                 <SimpleLineChart
                   title="Fine Dust Concentration"
-                  data={historicalData.map((item) => ({
+                  data={filteredData.map((item) => ({
                     name: item.name,
                     value: ((item.pm25 ?? 0) + (item.pm10 ?? 0)) / 2,
                   }))}
@@ -60,7 +76,7 @@ export function DustCard({
               ) : (
                 <SimpleBarChart
                   title="Fine Dust Concentration"
-                  data={historicalData.map((item) => ({
+                  data={filteredData.map((item) => ({
                     name: item.name,
                     value: ((item.pm25 ?? 0) + (item.pm10 ?? 0)) / 2,
                   }))}

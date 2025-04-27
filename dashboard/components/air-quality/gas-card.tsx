@@ -11,6 +11,7 @@ import { Loader2 } from "lucide-react";
 import { SimpleBarChart, SimpleLineChart } from "@/components/dashboard-charts";
 import { ChartData, ChartType } from "@/lib/types/common";
 import { GasType } from "@/lib/types/air-quality";
+import { useMemo } from "react";
 
 interface GasCardProps {
   loading: boolean;
@@ -44,6 +45,14 @@ export function GasCard({
     return;
   }
 
+  const filteredData = useMemo(() => {
+    return historicalData.filter((item) => item[gasType] !== undefined);
+  }, [historicalData, gasType]);
+
+  if (isSingleDay && !filteredData.length) {
+    return;
+  }
+
   return (
     <Card>
       <CardHeader>
@@ -64,9 +73,9 @@ export function GasCard({
               {chartType === "line" ? (
                 <SimpleLineChart
                   title={`${label.title} Trend`}
-                  data={historicalData.map((item) => ({
+                  data={filteredData.map((item) => ({
                     name: item.name,
-                    value: item[gasType] ?? 0,
+                    value: item[gasType],
                   }))}
                   dataKeys={["value"]}
                   unit={`${label.unit}`}
@@ -75,9 +84,9 @@ export function GasCard({
               ) : (
                 <SimpleBarChart
                   title={`${label.title} Trend`}
-                  data={historicalData.map((item) => ({
+                  data={filteredData.map((item) => ({
                     name: item.name,
-                    value: item[gasType] ?? 0,
+                    value: item[gasType],
                   }))}
                   dataKeys={["value"]}
                   unit={`${label.unit}`}

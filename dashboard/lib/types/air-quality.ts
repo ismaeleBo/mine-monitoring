@@ -61,7 +61,7 @@ export interface AirQualityAveragesState {
 }
 
 export interface DailyAverageDto {
-  date: string; // YYYY-MM-DD
+  date: string;
   avgPm25: number;
   avgPm10: number;
   avgNo2: number;
@@ -70,6 +70,19 @@ export interface DailyAverageDto {
   avgSo2: number;
   avgCh4: number;
   avgVoc: number;
+}
+
+export interface DailyMeasurementsResponse {
+  timestamp: string;
+
+  pm25?: number;
+  pm10?: number;
+  no2?: number;
+  co?: number;
+  o2?: number;
+  so2?: number;
+  ch4?: number;
+  voc?: number;
 }
 
 export type GasType = "co" | "no2" | "so2" | "ch4" | "voc" | "o2";

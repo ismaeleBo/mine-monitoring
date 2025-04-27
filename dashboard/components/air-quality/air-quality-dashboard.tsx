@@ -1,7 +1,7 @@
 "use client";
 
-import { useState, useEffect } from "react";
-import { subDays } from "date-fns";
+import { useState } from "react";
+import { subDays, format } from "date-fns";
 import {
   Card,
   CardContent,
@@ -13,13 +13,13 @@ import { useAirQualityData } from "@/hooks/useAirQualityData";
 import { DataSelector } from "../data-selector";
 import { DustCard } from "./dust-card";
 import { GasCard } from "./gas-card";
-import { ChartData, ChartType } from "@/lib/types/common";
 import { DateRange } from "react-day-picker";
 import { GasType } from "@/lib/types/air-quality";
 import { DatePickerWithRange } from "../date-range-picker";
 import { Button } from "../ui/button";
 import { Alert, AlertDescription, AlertTitle } from "../ui/alert";
-import { AlertTriangle } from "lucide-react";
+import { AlertTriangle, Loader2 } from "lucide-react";
+import { ChartType } from "@/lib/types/common";
 
 export function AirQualityDashboard() {
   const [location, setLocation] = useState("all");
@@ -29,36 +29,16 @@ export function AirQualityDashboard() {
     to: new Date(),
   });
 
-  const { loading, airQualityData, averages, error } = useAirQualityData(
+  const { loading, error, historicalData, averages } = useAirQualityData(
     location,
     dateRange
   );
 
-  const [historicalData, setHistoricalData] = useState<ChartData[]>([]);
-
-  useEffect(() => {
-    if (airQualityData && airQualityData.length > 0) {
-      const sortedData = [...airQualityData].sort(
-        (a, b) => new Date(a.date).getTime() - new Date(b.date).getTime()
-      );
-
-      const formattedData: ChartData[] = sortedData.map((entry) => ({
-        name: entry.date,
-        pm25: entry.avgPm25,
-        pm10: entry.avgPm10,
-        no2: entry.avgNo2,
-        co: entry.avgCo,
-        o2: entry.avgO2,
-        so2: entry.avgSo2,
-        ch4: entry.avgCh4,
-        voc: entry.avgVoc,
-      }));
-
-      setHistoricalData(formattedData);
-    } else {
-      setHistoricalData([]);
-    }
-  }, [airQualityData]);
+  const isSingleDay =
+    dateRange?.from && dateRange?.to
+      ? format(dateRange.from, "yyyy-MM-dd") ===
+        format(dateRange.to, "yyyy-MM-dd")
+      : false;
 
   return (
     <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-3">
@@ -70,7 +50,7 @@ export function AirQualityDashboard() {
               Realtime air quality monitoring across mining zones
             </CardDescription>
           </div>
-          <div className="flex gap-2">
+          <div className="flex flex-wrap items-center gap-2">
             <DataSelector location={location} setLocation={setLocation} />
             <DatePickerWithRange date={dateRange} setDate={setDateRange} />
             <div className="flex gap-2">
@@ -89,24 +69,41 @@ export function AirQualityDashboard() {
             </div>
           </div>
         </CardHeader>
-        {!dateRange && (
-          <div className="flex h-[300px] items-center justify-center text-muted-foreground">
-            Selezionare un range di date valido
+
+        {loading && (
+          <div className="flex h-[200px] items-center justify-center">
+            <Loader2 className="h-6 w-6 animate-spin text-muted-foreground" />
           </div>
         )}
-        {error && dateRange && (
+
+        {!dateRange && (
+          <div className="flex h-[300px] items-center justify-center text-muted-foreground">
+            Selezionare un intervallo di tempo per visualizzare i dati
+          </div>
+        )}
+
+        {dateRange && error && (
           <Alert variant="destructive" className="h-[300px] flex items-center">
             <AlertTriangle className="h-4 w-4" />
             <AlertTitle>Errore</AlertTitle>
             <AlertDescription>{error}</AlertDescription>
           </Alert>
         )}
-        {!error && !historicalData.length && (
-          <div className="flex h-[300px] items-center justify-center text-muted-foreground">
-            Nessun dato disponibile per l'intervallo selezionato
-          </div>
-        )}
-        {!error && historicalData.length && (
+
+        {!error &&
+          !loading &&
+          (!historicalData.length ||
+            historicalData.every(
+              (d) =>
+                Object.values(d).filter((v) => typeof v === "number").length ===
+                0
+            )) && (
+            <div className="flex h-[300px] items-center justify-center text-muted-foreground">
+              Nessun dato disponibile per l'intervallo selezionato
+            </div>
+          )}
+
+        {!error && historicalData.length > 0 && (
           <CardContent>
             <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-3">
               <DustCard
@@ -114,19 +111,19 @@ export function AirQualityDashboard() {
                 historicalData={historicalData}
                 averageDust={(averages.pm25 + averages.pm10) / 2}
                 chartType={chartType}
-                isSingleDay={dateRange?.from === dateRange?.to}
+                isSingleDay={isSingleDay}
               />
 
               {(["co", "no2", "so2", "ch4", "voc", "o2"] as GasType[]).map(
                 (gas) => (
                   <GasCard
-                    loading={loading}
                     key={gas}
+                    loading={loading}
                     gasType={gas}
                     averageGas={averages[gas]}
                     historicalData={historicalData}
                     chartType={chartType}
-                    isSingleDay={dateRange?.from === dateRange?.to}
+                    isSingleDay={isSingleDay}
                   />
                 )
               )}

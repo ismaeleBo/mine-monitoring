@@ -48,6 +48,6 @@ class AlarmManager:
         }
     
     def publish_alarm(self, alarm_payload):
-        topic = f"mining/alerts/site-a/{alarm_payload['zone']}/{alarm_payload['severity']}/{alarm_payload['sensor_id']}"
+        topic = f"mining/alerts/{alarm_payload['zone']}/{alarm_payload['severity']}/{alarm_payload['sensor_id']}"
         self.mqtt_client.publish(topic, json.dumps(alarm_payload))
         print(f"[ALARM] {alarm_payload['severity']} - {alarm_payload['parameter']} = {alarm_payload['measured_value']} in {alarm_payload['zone']} (Sensor {alarm_payload['sensor_id']})")

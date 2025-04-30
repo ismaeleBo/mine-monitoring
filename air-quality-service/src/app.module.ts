@@ -9,6 +9,7 @@ import { MqttService } from './services/mqtt.service';
 import { AirQualityMeasurement } from './entities/air-quality-measurement.entity';
 import { DatabaseModule } from './modules/database.module';
 import { MqttController } from './controllers/mqtt.controller';
+import { AirQualityMicroserviceController } from './controllers/air-quality.microservice.controller';
 
 @Module({
   imports: [
@@ -18,7 +19,11 @@ import { MqttController } from './controllers/mqtt.controller';
     DatabaseModule,
     TypeOrmModule.forFeature([AirQualityMeasurement]),
   ],
-  controllers: [AirQualityController, MqttController],
+  controllers: [
+    AirQualityController,
+    AirQualityMicroserviceController,
+    MqttController,
+  ],
   providers: [AirQualityService, AirQualityRepository, MqttService],
   exports: [MqttService],
 })

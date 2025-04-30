@@ -1,0 +1,44 @@
+import { NestFactory } from '@nestjs/core';
+import { AppModule } from './app.module';
+import { ValidationPipe, Logger } from '@nestjs/common';
+import { MicroserviceOptions, Transport } from '@nestjs/microservices';
+import { SwaggerModule, DocumentBuilder } from '@nestjs/swagger';
+
+async function bootstrap() {
+  const logger = new Logger('AlarmService');
+
+  const app = await NestFactory.create(AppModule);
+
+  // ✅ Microservizio TCP per API Gateway
+  app.connectMicroservice<MicroserviceOptions>({
+    transport: Transport.TCP,
+    options: {
+      host: 'localhost',
+      port: 3003,
+    },
+  });
+
+  // ✅ DTO Validation globale
+  app.useGlobalPipes(new ValidationPipe({ whitelist: true, transform: true }));
+
+  // ✅ Swagger docs
+  const config = new DocumentBuilder()
+    .setTitle('Alarm Service API')
+    .setDescription('Servizio per la gestione degli allarmi ambientali')
+    .setVersion('1.0')
+    .addTag('alarms')
+    .build();
+
+  const document = SwaggerModule.createDocument(app, config);
+  SwaggerModule.setup('api', app, document);
+
+  // ✅ Avvio
+  await app.startAllMicroservices();
+  await app.listen(process.env.PORT ?? 3003);
+
+  logger.log(
+    `Alarm Service HTTP listening on port ${process.env.PORT ?? 3003}`,
+  );
+  logger.log(`Alarm Service TCP microservice attivo sulla porta 3002`);
+}
+bootstrap();

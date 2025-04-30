@@ -40,7 +40,7 @@ class AlarmManager:
         return {
             "sensor_id": sensor_data["sensor_id"],
             "timestamp": sensor_data["timestamp"],
-            "zone": sensor_data["location"],
+            "location": sensor_data["location"],
             "parameter": parameter,
             "measured_value": value,
             "threshold_exceeded": threshold,
@@ -48,6 +48,6 @@ class AlarmManager:
         }
     
     def publish_alarm(self, alarm_payload):
-        topic = f"mining/alerts/{alarm_payload['zone']}/{alarm_payload['severity']}/{alarm_payload['sensor_id']}"
+        topic = f"mining/alerts/{alarm_payload['location']}/{alarm_payload['severity']}/{alarm_payload['sensor_id']}"
         self.mqtt_client.publish(topic, json.dumps(alarm_payload))
-        print(f"[ALARM] {alarm_payload['severity']} - {alarm_payload['parameter']} = {alarm_payload['measured_value']} in {alarm_payload['zone']} (Sensor {alarm_payload['sensor_id']})")
+        print(f"[ALARM] {alarm_payload['severity']} - {alarm_payload['parameter']} = {alarm_payload['measured_value']} in {alarm_payload['location']} (Sensor {alarm_payload['sensor_id']})")

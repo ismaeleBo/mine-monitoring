@@ -5,7 +5,7 @@ def build_world():
     zones = []
 
     # --- Openpit Sector ---
-    openpit = Zone(zone_id="openpit-sector", name="Area di Scavo a Cielo Aperto")
+    openpit = Zone(zone_id="openpit-sector", name="Openpit Sector")
     openpit.add_sensor(Sensor(
         sensor_id="AIR-001",
         sensor_type="air_quality",
@@ -22,7 +22,7 @@ def build_world():
     zones.append(openpit)
 
     # --- Tunnel Ventilation ---
-    tunnel = Zone(zone_id="tunnel-ventilation", name="Tunnel di Ventilazione")
+    tunnel = Zone(zone_id="tunnel-ventilation", name="Tunnel Ventilation")
     tunnel.add_sensor(Sensor(
         sensor_id="AIR-002",
         sensor_type="air_quality",
@@ -39,7 +39,7 @@ def build_world():
     zones.append(tunnel)
 
     # --- Perimeter ---
-    perimeter = Zone(zone_id="perimeter", name="Perimetro Esterno")
+    perimeter = Zone(zone_id="perimeter", name="Perimeter")
     perimeter.add_sensor(Sensor(
         sensor_id="AIR-003",
         sensor_type="air_quality",
@@ -55,7 +55,7 @@ def build_world():
     zones.append(perimeter)
 
     # --- Workshop Area ---
-    workshop = Zone(zone_id="workshop-area", name="Officine Manutenzione")
+    workshop = Zone(zone_id="workshop-area", name="Workshop Area")
     workshop.add_sensor(Sensor(
         sensor_id="AIR-004",
         sensor_type="air_quality",
@@ -71,7 +71,7 @@ def build_world():
     zones.append(workshop)
 
     # --- Stockpile Area ---
-    stockpile = Zone(zone_id="stockpile-area", name="Area Stockpile")
+    stockpile = Zone(zone_id="stockpile-area", name="Stockpile Area")
     stockpile.add_sensor(Sensor(
         sensor_id="AIR-005",
         sensor_type="air_quality",
@@ -84,7 +84,7 @@ def build_world():
     zones.append(stockpile)
 
     # --- Internal Roads ---
-    roads = Zone(zone_id="internal-roads", name="Strade Interne")
+    roads = Zone(zone_id="internal-roads", name="Internal Roads")
     roads.add_sensor(Sensor(
         sensor_id="AIR-006",
         sensor_type="air_quality",
@@ -97,7 +97,7 @@ def build_world():
     zones.append(roads)
 
     # --- Fuel Storage ---
-    fuel_storage = Zone(zone_id="fuel-storage", name="Deposito Carburante")
+    fuel_storage = Zone(zone_id="fuel-storage", name="Fuel Storage")
     fuel_storage.add_sensor(Sensor(
         sensor_id="AIR-007",
         sensor_type="air_quality",
@@ -110,7 +110,7 @@ def build_world():
     zones.append(fuel_storage)
 
     # --- Loading Zone ---
-    loading_zone = Zone(zone_id="loading-zone", name="Zona di Carico")
+    loading_zone = Zone(zone_id="loading-zone", name="Loading Zone")
     loading_zone.add_sensor(Sensor(
         sensor_id="AIR-008",
         sensor_type="air_quality",
@@ -123,7 +123,7 @@ def build_world():
     zones.append(loading_zone)
 
     # --- Underground Pit ---
-    underground_pit = Zone(zone_id="underground-pit", name="Cava Sotterranea")
+    underground_pit = Zone(zone_id="underground-pit", name="Underground Pit")
     underground_pit.add_sensor(Sensor(
         sensor_id="AIR-009",
         sensor_type="air_quality",

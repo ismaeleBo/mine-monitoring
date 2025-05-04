@@ -5,8 +5,8 @@ class Event:
         self.event_type = event_type
         self.start_time = datetime.datetime.utcnow()
         self.duration_seconds = duration_seconds
-        self.intensity = intensity  # Moltiplicatore dei danni
-        self.impacted_parameters = impacted_parameters  # Es: {"PM2_5": 2.0, "PM10": 1.5}
+        self.intensity = intensity                      # Damage Multiplier
+        self.impacted_parameters = impacted_parameters  # E.g.: {"PM2_5": 2.0, "PM10": 1.5}
 
     def is_expired(self):
         elapsed = (datetime.datetime.utcnow() - self.start_time).total_seconds()

@@ -7,14 +7,14 @@ class Sensor:
         self.sensor_id = sensor_id
         self.sensor_type = sensor_type
         self.location = location
-        self.parameters = parameters  # Esempio: ["PM2_5", "PM10"]
-        self.baseline = baseline      # Esempio: {"PM2_5": (10, 40), "PM10": (20, 70)}
+        self.parameters = parameters  # Example: ["PM2_5", "PM10"]
+        self.baseline = baseline      # Example: {"PM2_5": (10, 40), "PM10": (20, 70)}
         self.anomaly_rate = anomaly_rate
 
     def generate_data(self):
         timestamp = datetime.datetime.utcnow().isoformat() + "Z"
 
-        # Decide se generare valori normali o anomali usando Poisson
+        # Decides whether to generate normal or anomalous values ​​using Poisson
         is_anomaly = np.random.poisson(self.anomaly_rate) > 0
 
         if is_anomaly:
@@ -44,7 +44,7 @@ class Sensor:
         values = {}
         for param in self.parameters:
             low, high = self.baseline[param]
-            # Genera valori anomali oltre il normale range
+            # Generates abnormal values ​​beyond the normal range
             anomaly_low = low * 0.5
             anomaly_high = high * 2.0
             value = round(random.uniform(anomaly_high, anomaly_high * 1.2), 2)

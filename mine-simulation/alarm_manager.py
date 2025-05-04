@@ -4,21 +4,21 @@ class AlarmManager:
     def __init__(self, mqtt_client):
         self.mqtt_client = mqtt_client
         self.thresholds = {
-            "PM2.5": {"LOW": 50, "MEDIUM": 100, "HIGH": 150, "CRITICAL": 200},  # µg/m³
+            "PM2_5": {"LOW": 50, "MEDIUM": 100, "HIGH": 150, "CRITICAL": 200},   # µg/m³
             "PM10": {"LOW": 70, "MEDIUM": 150, "HIGH": 200, "CRITICAL": 300},    # µg/m³
             "CO": {"LOW": 5, "MEDIUM": 15, "HIGH": 30, "CRITICAL": 50},          # ppm
-            "NO₂": {"LOW": 40, "MEDIUM": 80, "HIGH": 120, "CRITICAL": 160},      # ppb
-            "O₂": {"LOW": 19.5, "CRITICAL": 18.0},                               # %, soglie verso il basso
-            "pH": {"LOW": 6.0, "HIGH": 9.0},                                     # range sicuro
-            "Conducibilità": {"LOW": 300, "HIGH": 1200},                         # µS/cm
-            "Ossigeno disciolto": {"LOW": 4, "CRITICAL": 2},                     # mg/L
-            "Arsenico": {"LOW": 0.01, "MEDIUM": 0.05, "HIGH": 0.1, "CRITICAL": 0.2}, # mg/L
-            "Piombo": {"LOW": 50, "MEDIUM": 100, "HIGH": 300, "CRITICAL": 500},  # mg/kg
+            "NO2": {"LOW": 40, "MEDIUM": 80, "HIGH": 120, "CRITICAL": 160},      # ppb
+            "O2": {"LOW": 19.5, "CRITICAL": 18.0},                               # %
+            "pH": {"LOW": 6.0, "HIGH": 9.0},                                     # safe range
+            "Conductivity": {"LOW": 300, "HIGH": 1200},                          # µS/cm
+            "DO": {"LOW": 4, "CRITICAL": 2},                                     # mg/L
+            "As": {"LOW": 0.01, "MEDIUM": 0.05, "HIGH": 0.1, "CRITICAL": 0.2},   # mg/L
+            "Pb": {"LOW": 50, "MEDIUM": 100, "HIGH": 300, "CRITICAL": 500},      # mg/kg
             "VOC": {"LOW": 100, "MEDIUM": 200, "HIGH": 300, "CRITICAL": 500},    # ppb
-            # Produzione
-            "Materiale estratto": {"LOW": 60, "MEDIUM": 40, "CRITICAL": 20},     # t/h, più basso = peggio
-            "Carichi movimentati": {"LOW": 6, "MEDIUM": 4, "CRITICAL": 2},       # unità/h
-            "Ore macchina operative": {"LOW": 16, "CRITICAL": 12}               # h/giorno
+            # Production
+            "EXTRACTED_MATERIAL": {"LOW": 60, "MEDIUM": 40, "CRITICAL": 20},     # t/h
+            "LOADS_MOVED": {"LOW": 6, "MEDIUM": 4, "CRITICAL": 2},               # units/h
+            "MACHINE_OPERATING_HOURS": {"LOW": 16, "CRITICAL": 12}               # h/day
         }
     def evaluate(self, sensor_data):
         for parameter, value in sensor_data["values"].items():
@@ -29,12 +29,22 @@ class AlarmManager:
                     self.publish_alarm(alarm)
 
     def check_severity(self, parameter, value):
-        param_thresholds = self.thresholds.get(parameter)
-        if isinstance(param_thresholds, dict):
-            for severity, threshold in reversed(param_thresholds.items()):
-                if value >= threshold:
+        thresholds = self.thresholds.get(parameter)
+        if not thresholds:
+            return None
+
+        # O2 and others with CRITICAL = LOW values
+        if parameter == "O2":
+            for severity in ["CRITICAL", "LOW"]:
+                if value <= thresholds.get(severity, float("inf")):
                     return severity
-        return None
+    else:
+        # HIGH to LOW order
+        for severity in ["CRITICAL", "HIGH", "MEDIUM", "LOW"]:
+            if value >= thresholds.get(severity, float("-inf")):
+                return severity
+    return None
+
 
     def generate_alarm(self, sensor_data, parameter, value, severity, threshold):
         return {

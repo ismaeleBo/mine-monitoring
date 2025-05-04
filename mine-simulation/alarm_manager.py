@@ -38,12 +38,12 @@ class AlarmManager:
             for severity in ["CRITICAL", "LOW"]:
                 if value <= thresholds.get(severity, float("inf")):
                     return severity
-    else:
-        # HIGH to LOW order
-        for severity in ["CRITICAL", "HIGH", "MEDIUM", "LOW"]:
-            if value >= thresholds.get(severity, float("-inf")):
-                return severity
-    return None
+        else:
+            # HIGH to LOW order
+            for severity in ["CRITICAL", "HIGH", "MEDIUM", "LOW"]:
+                if value >= thresholds.get(severity, float("-inf")):
+                    return severity
+        return None
 
 
     def generate_alarm(self, sensor_data, parameter, value, severity, threshold):

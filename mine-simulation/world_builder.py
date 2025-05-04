@@ -135,5 +135,62 @@ def build_world():
         }
     ))
     zones.append(underground_pit)
+    
+    # --- Tailings Pond ---
+    tailings_pond = Zone(zone_id="tailings-pond", name="Tailings Pond")
+    tailings_pond.add_sensor(Sensor(
+        sensor_id="WATER-001",
+        sensor_type="water_quality",
+        location="tailings-pond",
+        parameters=["pH", "Conductivity", "As"],
+        baseline={
+            "pH": (6.5, 8.5),
+            "Conductivity": (300, 800),
+            "As": (0.005, 0.01),
+        }
+    ))
+    zones.append(tailings_pond)
+
+    # --- Surface Stream ---
+    surface_stream = Zone(zone_id="surface-stream", name="Surface Stream")
+    surface_stream.add_sensor(Sensor(
+        sensor_id="WATER-002",
+        sensor_type="water_quality",
+        location="surface-stream",
+        parameters=["pH", "Conductivity", "DO"],
+        baseline={
+            "pH": (6.5, 8.5),
+            "Conductivity": (300, 800),
+            "DO": (6.0, 9.0),
+        }
+    ))
+    zones.append(surface_stream)
+
+    # --- Groundwater Monitoring Well ---
+    groundwater = Zone(zone_id="groundwater-monitoring", name="Groundwater Monitoring")
+    groundwater.add_sensor(Sensor(
+        sensor_id="WATER-003",
+        sensor_type="water_quality",
+        location="groundwater-monitoring",
+        parameters=["pH", "As"],
+        baseline={
+            "pH": (6.5, 8.5),
+            "As": (0.004, 0.009),
+        }
+    ))
+    zones.append(groundwater)
+
+    # --- Drainage Channel ---
+    drainage_channel = Zone(zone_id="drainage-channel", name="Drainage Channel")
+    drainage_channel.add_sensor(Sensor(
+        sensor_id="WATER-004",
+        sensor_type="water_quality",
+        location="drainage-channel",
+        parameters=["DO"],
+        baseline={
+            "DO": (6.0, 9.0),
+        }
+    ))
+    zones.append(drainage_channel)
 
     return zones

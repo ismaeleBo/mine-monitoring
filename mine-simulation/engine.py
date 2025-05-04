@@ -5,6 +5,7 @@ from event import Event
 from operation import Operation
 import paho.mqtt.client as mqtt
 from alarm_manager import AlarmManager
+from profiles import EVENT_PROFILES, OPERATION_PROFILES
 import json
 
 class StateEngine:
@@ -17,28 +18,8 @@ class StateEngine:
         self.mqtt_client.connect(broker_address, broker_port)
         self.alarm_manager = AlarmManager(self.mqtt_client)
 
-    
     def add_zone(self, zone):
         self.zones.append(zone)
-
-    EVENT_PROFILES = [
-        {
-            "type": "chemical_spill",
-            "params": {"VOC": 2.0, "As": 1.5}
-        },
-        {
-            "type": "gas_leak",
-            "params": {"CH4": 3.0, "CO": 2.5}
-        },
-        {
-            "type": "diesel_exhaust",
-            "params": {"PM10": 1.8, "NO2": 1.6}
-        },
-        {
-            "type": "oxygen_drop",
-            "params": {"O2": 0.8}
-        }
-    ]
 
     def trigger_random_event(self):
         """With a low probability it generates an extraordinary event in an area"""
@@ -53,40 +34,6 @@ class StateEngine:
             )
             zone.trigger_event(event)
             print(f"[EVENT] Event '{event.event_type}' in zone {zone.zone_id}")
-
-    OPERATION_PROFILES = [
-        {
-            "type": "excavation",
-            "params": {
-                "PM10": 1.3,
-                "PM2_5": 1.2,
-                "tons_extracted_per_hour": 1.5
-            }
-        },
-        {
-            "type": "material_transport",
-            "params": {
-                "PM10": 1.4,
-                "LOADS_MOVED": 1.2
-            }
-        },
-        {
-            "type": "drilling",
-            "params": {
-                "PM2_5": 1.5,
-                "NO2": 1.3,
-                "MACHINE_OPERATING_HOURS": 1.1
-            }
-        },
-        {
-            "type": "maintenance",
-            "params": {
-                "VOC": 1.4,
-                "CO": 1.2
-            }
-        }
-    ]
-
 
     def trigger_random_operation(self):
         """Generate standard operations with higher probability"""

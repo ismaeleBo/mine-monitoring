@@ -19,6 +19,7 @@ async function bootstrap() {
     )
     .setVersion('1.0')
     .addTag('air-quality')
+    .addTag('water-quality')
     .addTag('alarms')
     .build();
 

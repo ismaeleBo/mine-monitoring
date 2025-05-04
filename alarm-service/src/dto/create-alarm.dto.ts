@@ -21,7 +21,7 @@ export class CreateAlarmDto {
   @IsString()
   location: string;
 
-  @ApiProperty({ example: 'PM2.5' })
+  @ApiProperty({ example: 'PM2_5' })
   @IsString()
   parameter: string;
 

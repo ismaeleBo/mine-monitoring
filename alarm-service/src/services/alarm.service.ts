@@ -57,6 +57,12 @@ export class AlarmService {
       qb.andWhere('alarm.severity = :severity', { severity: query.severity });
     }
 
+    if (query.parameter) {
+      qb.andWhere('alarm.parameter = :parameter', {
+        parameter: query.parameter,
+      });
+    }
+
     if (query.startDate && query.endDate) {
       qb.andWhere('alarm.timestamp BETWEEN :start AND :end', {
         start: new Date(query.startDate),
@@ -73,5 +79,39 @@ export class AlarmService {
     }
 
     return qb.orderBy('alarm.timestamp', 'DESC').getMany();
+  }
+
+  async findPaginated(
+    query: AlarmQueryDto,
+    page = 1,
+    limit = 20,
+  ): Promise<{ data: Alarm[]; total: number }> {
+    const qb = this.alarmRepository.createQueryBuilder('alarm');
+
+    // Apply filters (same as findByFilters)
+    if (query.location)
+      qb.andWhere('alarm.location = :location', { location: query.location });
+    if (query.sensorId)
+      qb.andWhere('alarm.sensorId = :sensorId', { sensorId: query.sensorId });
+    if (query.severity)
+      qb.andWhere('alarm.severity = :severity', { severity: query.severity });
+    if (query.parameter)
+      qb.andWhere('alarm.parameter = :parameter', {
+        parameter: query.parameter,
+      });
+    if (query.startDate && query.endDate) {
+      qb.andWhere('alarm.timestamp BETWEEN :start AND :end', {
+        start: new Date(query.startDate),
+        end: new Date(query.endDate),
+      });
+    }
+
+    const [data, total] = await qb
+      .orderBy('alarm.timestamp', 'DESC')
+      .skip((page - 1) * limit)
+      .take(limit)
+      .getManyAndCount();
+
+    return { data, total };
   }
 }

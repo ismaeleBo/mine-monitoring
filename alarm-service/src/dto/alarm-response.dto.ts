@@ -14,7 +14,7 @@ export class AlarmResponseDto {
   @ApiProperty({ example: 'openpit-sector' })
   location: string;
 
-  @ApiProperty({ example: 'PM2.5' })
+  @ApiProperty({ example: 'PM10' })
   parameter: string;
 
   @ApiProperty({ example: 152.7 })

@@ -10,10 +10,10 @@ export class AlarmController {
   constructor(private readonly alarmService: AlarmService) {}
 
   @Get()
-  @ApiOperation({ summary: 'Recupera gli alarm con filtri opzionali' })
+  @ApiOperation({ summary: 'Get alarms with optional filters' })
   @ApiResponse({
     status: 200,
-    description: 'Lista di allarmi filtrata con successo',
+    description: 'Alarms list successful filtered',
     type: [AlarmResponseDto],
   })
   async getAlarms(@Query() query: AlarmQueryDto): Promise<AlarmResponseDto[]> {

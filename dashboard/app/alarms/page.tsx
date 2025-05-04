@@ -14,17 +14,19 @@ import {
   SelectItem,
 } from "@/components/ui/select";
 import { DatePickerWithRange } from "@/components/date-range-picker";
-import { AlertTriangle } from "lucide-react";
+import { AlertTriangle, Loader2 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Alarm } from "@/lib/types/alarms";
 import {
   ALARM_PARAMETER_LABELS,
   ALARM_SEVERITY_LABELS,
 } from "@/lib/constants/alarms";
+import { getSocket } from "@/lib/socket";
 
 const LIMIT = 10;
 
 export default function AlarmsPage() {
+  const [loading, setLoading] = useState(false);
   const [alarms, setAlarms] = useState<Alarm[]>([]);
   const [location, setLocation] = useState("all");
   const [severity, setSeverity] = useState("all");
@@ -34,8 +36,11 @@ export default function AlarmsPage() {
   const [page, setPage] = useState(1);
   const [total, setTotal] = useState(0);
 
+  const socket = getSocket();
+
   useEffect(() => {
     const fetchAlarms = async () => {
+      setLoading(true);
       const params = new URLSearchParams();
 
       if (location !== "all") params.append("location", location);
@@ -58,10 +63,19 @@ export default function AlarmsPage() {
       const json = await res.json();
       setAlarms(json.data);
       setTotal(json.total);
+      setLoading(false);
     };
 
     fetchAlarms();
-  }, [location, severity, sensorId, dateRange, page, parameter]);
+
+    socket.on("new-alarm", (alarm: Alarm) => {
+      fetchAlarms();
+    });
+
+    return () => {
+      socket.disconnect();
+    };
+  }, [socket, location, severity, sensorId, dateRange, page, parameter]);
 
   const totalPages = Math.ceil(total / LIMIT);
 
@@ -92,7 +106,7 @@ export default function AlarmsPage() {
           </SelectTrigger>
           <SelectContent>
             <SelectItem value="all">All</SelectItem>
-            {Object.entries(ALARM_SEVERITY_LABELS).map(([val, label]) => (
+            {Object.entries(ALARM_SEVERITY_LABELS).map(([val, { label }]) => (
               <SelectItem key={val} value={val}>
                 {label}
               </SelectItem>
@@ -130,18 +144,28 @@ export default function AlarmsPage() {
       ) : (
         <div>
           <div className="grid gap-4">
+            {loading && (
+              <div className="flex h-[200px] items-center justify-center">
+                <Loader2 className="h-6 w-6 animate-spin text-muted-foreground" />
+              </div>
+            )}
             {alarms.map((alarm) => (
-              <Card key={alarm.id}>
+              <Card
+                key={alarm.id}
+                style={{
+                  backgroundColor: ALARM_SEVERITY_LABELS[alarm.severity].color,
+                }}
+              >
                 <CardHeader>
                   <CardTitle className="flex items-center gap-2">
-                    <AlertTriangle className="text-red-500" />
+                    <AlertTriangle />
                     {ALARM_PARAMETER_LABELS[alarm.parameter].label} ={" "}
                     {alarm.measuredValue}{" "}
                     {ALARM_PARAMETER_LABELS[alarm.parameter].unit} (
-                    {ALARM_SEVERITY_LABELS[alarm.severity]})
+                    {ALARM_SEVERITY_LABELS[alarm.severity].label})
                   </CardTitle>
                 </CardHeader>
-                <CardContent className="text-sm text-muted-foreground">
+                <CardContent className="text-sm">
                   Zone: {LOCATION_LABELS[alarm.location] || alarm.location} •
                   Sensor: {alarm.sensorId} •{" "}
                   {format(new Date(alarm.timestamp), "PPPpp")}

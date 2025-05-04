@@ -1,10 +1,13 @@
 import { AlarmParameter, AlarmSeverity } from "../types/alarms";
 
-export const ALARM_SEVERITY_LABELS: Record<AlarmSeverity, string> = {
-  [AlarmSeverity.LOW]: "Low",
-  [AlarmSeverity.MEDIUM]: "Medium",
-  [AlarmSeverity.HIGH]: "High",
-  [AlarmSeverity.CRITICAL]: "Critical",
+export const ALARM_SEVERITY_LABELS: Record<
+  AlarmSeverity,
+  { label: string; color: string }
+> = {
+  [AlarmSeverity.LOW]: { label: "Low", color: "#fff" },
+  [AlarmSeverity.MEDIUM]: { label: "Medium", color: "#FFD32C" },
+  [AlarmSeverity.HIGH]: { label: "High", color: "#ff8383" },
+  [AlarmSeverity.CRITICAL]: { label: "Critical", color: "#c675e2" },
 };
 
 export const ALARM_PARAMETER_LABELS: Record<

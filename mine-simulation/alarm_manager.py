@@ -7,55 +7,70 @@ class AlarmManager:
         self.cooldown_seconds = cooldown_seconds
         self.last_triggered = {}  # {(sensor_id, parameter): datetime}
         self.thresholds = {
-            "PM2_5": {"LOW": 50, "MEDIUM": 100, "HIGH": 150, "CRITICAL": 200},   # µg/m³
-            "PM10": {"LOW": 70, "MEDIUM": 150, "HIGH": 200, "CRITICAL": 300},    # µg/m³
-            "CO": {"LOW": 5, "MEDIUM": 15, "HIGH": 30, "CRITICAL": 50},          # ppm
-            "NO2": {"LOW": 40, "MEDIUM": 80, "HIGH": 120, "CRITICAL": 160},      # ppb
-            "O2": {"LOW": 19.5, "CRITICAL": 18.0},                               # %
-            "pH": {"LOW": 6.0, "HIGH": 9.0},                                     # safe range
-            "Conductivity": {"LOW": 300, "HIGH": 1200},                          # µS/cm
-            "DO": {"LOW": 4, "CRITICAL": 2},                                     # mg/L
-            "As": {"LOW": 0.01, "MEDIUM": 0.05, "HIGH": 0.1, "CRITICAL": 0.2},   # mg/L
-            "Pb": {"LOW": 50, "MEDIUM": 100, "HIGH": 300, "CRITICAL": 500},      # mg/kg
-            "VOC": {"LOW": 100, "MEDIUM": 200, "HIGH": 300, "CRITICAL": 500},    # ppb
-            # Production
-            "EXTRACTED_MATERIAL": {"LOW": 60, "MEDIUM": 40, "CRITICAL": 20},     # t/h
-            "LOADS_MOVED": {"LOW": 6, "MEDIUM": 4, "CRITICAL": 2},               # units/h
-            "MACHINE_OPERATING_HOURS": {"LOW": 16, "CRITICAL": 12}               # h/day
+            "PM2_5": {"LOW": 50, "MEDIUM": 100, "HIGH": 150, "CRITICAL": 200},       # µg/m³
+            "PM10": {"LOW": 70, "MEDIUM": 150, "HIGH": 200, "CRITICAL": 300},        # µg/m³
+            "CO": {"LOW": 5, "MEDIUM": 15, "HIGH": 30, "CRITICAL": 50},              # ppm
+            "NO2": {"LOW": 40, "MEDIUM": 80, "HIGH": 120, "CRITICAL": 160},          # ppb
+            "O2": {"LOW": 19.5, "MEDIUM": 19.0, "HIGH": 18.5, "CRITICAL": 18.0},     # % (desc)
+            "pH": {"LOW": 6.0, "MEDIUM": 6.5, "HIGH": 9.0, "CRITICAL": 9.5},         # safe: 6.5–8.5
+            "Conductivity": {"LOW": 300, "MEDIUM": 600, "HIGH": 1000, "CRITICAL": 1200},  # µS/cm
+            "DO": {"LOW": 4, "MEDIUM": 3, "HIGH": 2.5, "CRITICAL": 2},               # mg/L (desc)
+            "As": {"LOW": 0.01, "MEDIUM": 0.05, "HIGH": 0.1, "CRITICAL": 0.2},       # mg/L
+            "Pb": {"LOW": 50, "MEDIUM": 100, "HIGH": 300, "CRITICAL": 500},          # mg/kg
+            "VOC": {"LOW": 100, "MEDIUM": 200, "HIGH": 300, "CRITICAL": 500},        # ppb
+
+            # Production metrics
+            "EXTRACTED_MATERIAL": {"LOW": 60, "MEDIUM": 40, "HIGH": 30, "CRITICAL": 20},  # t/h
+            "LOADS_MOVED": {"LOW": 6, "MEDIUM": 4, "HIGH": 3, "CRITICAL": 2},             # units/h
+            "MACHINE_OPERATING_HOURS": {"LOW": 16, "MEDIUM": 14, "HIGH": 13, "CRITICAL": 12}  # h/day
         }
     def evaluate(self, sensor_data):
+        if not sensor_data or "values" not in sensor_data:
+            print("[ALARM MANAGER] Missing or malformed payload:", sensor_data)
+            return
+
         for parameter, value in sensor_data["values"].items():
-            if parameter in self.thresholds:
-                severity = self.check_severity(parameter, value)
-                if severity:
-                    key = (sensor_data["sensor_id"], parameter)
-                    now = datetime.datetime.utcnow()
+            if parameter not in self.thresholds:
+                continue  # ignora parametri non monitorati
 
-                    last_time = self.last_triggered.get(key)
-                    if last_time is None or (now - last_time).total_seconds() >= self.cooldown_seconds:
-                        self.last_triggered[key] = now
+            if not isinstance(value, (int, float)):
+                print(f"[ALARM MANAGER] Non-numeric value for {parameter}: {value}")
+                continue
 
-                        alarm = self.generate_alarm(
-                            sensor_data, parameter, value, severity,
-                            self.thresholds[parameter][severity]
-                        )
-                        self.publish_alarm(alarm)
+            severity = self.check_severity(parameter, value)
+            if severity:
+                threshold = self.thresholds[parameter].get(severity)
+                if threshold is None:
+                    print(f"[ALARM MANAGER] No threshold '{severity}' for {parameter}")
+                    continue
+
+                alarm = self.generate_alarm(
+                    sensor_data, parameter, value, severity, threshold
+                )
+                self.publish_alarm(alarm)
 
     def check_severity(self, parameter, value):
-        thresholds = self.thresholds.get(parameter)
-        if not thresholds:
+        param_thresholds = self.thresholds.get(parameter)
+
+        if not param_thresholds or not isinstance(param_thresholds, dict):
             return None
 
-        # O2 and others with CRITICAL = LOW values
-        if parameter == "O2":
-            for severity in ["CRITICAL", "LOW"]:
-                if value <= thresholds.get(severity, float("inf")):
-                    return severity
-        else:
-            # HIGH to LOW order
-            for severity in ["CRITICAL", "HIGH", "MEDIUM", "LOW"]:
-                if value >= thresholds.get(severity, float("-inf")):
-                    return severity
+        thresholds = list(param_thresholds.items())
+
+        # Determines whether it is an increasing or decreasing parameter
+        is_increasing = thresholds[0][1] < thresholds[-1][1]
+
+        # Sort thresholds from least serious to most serious based on type
+        sorted_thresholds = (
+            thresholds if is_increasing else list(reversed(thresholds))
+        )
+
+        for severity, threshold in sorted_thresholds:
+            if is_increasing and value >= threshold:
+                return severity
+            elif not is_increasing and value <= threshold:
+                return severity
+
         return None
 
 

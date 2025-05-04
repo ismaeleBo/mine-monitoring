@@ -26,8 +26,8 @@ export function useAirQualityData(location: string, dateRange?: DateRange) {
     setLoading(true);
     try {
       let url = isSingleDay
-        ? "http://localhost:3001/air-quality/stats/daily-measurements"
-        : "http://localhost:3001/air-quality/stats/daily-average";
+        ? "http://localhost:3010/air-quality/stats/daily-measurements"
+        : "http://localhost:3010/air-quality/stats/daily-average";
 
       const params = new URLSearchParams();
 

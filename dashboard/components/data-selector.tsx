@@ -11,6 +11,7 @@ import { Button } from "@/components/ui/button";
 import { Download } from "lucide-react";
 import { DailyAverageDto } from "@/lib/types/air-quality";
 import { downloadAirQualityData } from "@/lib/data-formatters";
+import { LOCATION_LABELS } from "@/lib/constants/locations";
 
 interface DataSelectorProps {
   location: string;
@@ -31,15 +32,11 @@ export function DataSelector({
         </SelectTrigger>
         <SelectContent>
           <SelectItem value="all">All Locations</SelectItem>
-          <SelectItem value="openpit-sector">Openpit Sector</SelectItem>
-          <SelectItem value="tunnel-ventilation">Tunnel Ventilation</SelectItem>
-          <SelectItem value="perimeter">Perimeter</SelectItem>
-          <SelectItem value="workshop-area">Workshop Area</SelectItem>
-          <SelectItem value="stockpile-area">Stockpile Area</SelectItem>
-          <SelectItem value="internal-roads">Internal Roads</SelectItem>
-          <SelectItem value="loading-zone">Loading Zone</SelectItem>
-          <SelectItem value="underground-pit">Underground Pit</SelectItem>
-          <SelectItem value="fuel-storage">Fuel Storage</SelectItem>
+          {Object.entries(LOCATION_LABELS).map(([value, label]) => (
+            <SelectItem key={value} value={value}>
+              {label}
+            </SelectItem>
+          ))}
         </SelectContent>
       </Select>
 

@@ -33,7 +33,7 @@ export class AirQualityController {
   ): Promise<AirQualityResponseDto> {
     return firstValueFrom(
       this.airQualityClient.send<AirQualityResponseDto>(
-        { cmd: 'get_reading' },
+        { cmd: 'get_air_quality_reading' },
         id,
       ),
     );
@@ -47,7 +47,7 @@ export class AirQualityController {
   ): Promise<AirQualityResponseDto[]> {
     return firstValueFrom(
       this.airQualityClient.send<AirQualityResponseDto[]>(
-        { cmd: 'search_readings' },
+        { cmd: 'search_air_quality_readings' },
         query,
       ),
     );
@@ -98,7 +98,7 @@ export class AirQualityController {
 
     return firstValueFrom(
       this.airQualityClient.send<DailyAverageDto[]>(
-        { cmd: 'get_daily_averages' },
+        { cmd: 'get_air_quality_daily_averages' },
         params,
       ),
     );
@@ -137,7 +137,7 @@ export class AirQualityController {
 
     const response = await firstValueFrom(
       this.airQualityClient.send<DailyMeasurementsResponse[]>(
-        { cmd: 'get_daily_measurements' },
+        { cmd: 'get_air_quality_daily_measurements' },
         { date: parsedDate.toISOString(), location },
       ),
     );

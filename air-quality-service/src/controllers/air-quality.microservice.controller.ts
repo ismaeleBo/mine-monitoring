@@ -9,21 +9,21 @@ import { AirQualityService } from 'src/services/air-quality.service';
 export class AirQualityMicroserviceController {
   constructor(private readonly airQualityService: AirQualityService) {}
 
-  @MessagePattern({ cmd: 'get_reading' })
+  @MessagePattern({ cmd: 'get_air_quality_reading' })
   async getReadingByIdMicroservice(
     @Payload() id: string,
   ): Promise<AirQualityResponseDto | null> {
     return this.airQualityService.getReadingById(id);
   }
 
-  @MessagePattern({ cmd: 'search_readings' })
+  @MessagePattern({ cmd: 'search_air_quality_readings' })
   async searchReadingsMicroservice(
     @Payload() query: AirQualityQueryParamsDto,
   ): Promise<AirQualityResponseDto[]> {
     return this.airQualityService.search(query);
   }
 
-  @MessagePattern({ cmd: 'get_daily_averages' })
+  @MessagePattern({ cmd: 'get_air_quality_daily_averages' })
   async getDailyAveragesMicroservice(
     @Payload()
     payload: {
@@ -50,7 +50,7 @@ export class AirQualityMicroserviceController {
     );
   }
 
-  @MessagePattern({ cmd: 'get_daily_measurements' })
+  @MessagePattern({ cmd: 'get_air_quality_daily_measurements' })
   async getDailyMeasurementsMicroservice(
     @Payload() payload: { date: string; location?: string },
   ) {

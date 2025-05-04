@@ -1,8 +1,10 @@
 import json
 
 class AlarmManager:
-    def __init__(self, mqtt_client):
+    def __init__(self, mqtt_client, cooldown_seconds=60):
         self.mqtt_client = mqtt_client
+        self.cooldown_seconds = cooldown_seconds
+        self.last_triggered = {}  # {(sensor_id, parameter): datetime}
         self.thresholds = {
             "PM2_5": {"LOW": 50, "MEDIUM": 100, "HIGH": 150, "CRITICAL": 200},   # µg/m³
             "PM10": {"LOW": 70, "MEDIUM": 150, "HIGH": 200, "CRITICAL": 300},    # µg/m³
@@ -25,8 +27,18 @@ class AlarmManager:
             if parameter in self.thresholds:
                 severity = self.check_severity(parameter, value)
                 if severity:
-                    alarm = self.generate_alarm(sensor_data, parameter, value, severity, self.thresholds[parameter][severity])
-                    self.publish_alarm(alarm)
+                    key = (sensor_data["sensor_id"], parameter)
+                    now = datetime.datetime.utcnow()
+
+                    last_time = self.last_triggered.get(key)
+                    if last_time is None or (now - last_time).total_seconds() >= self.cooldown_seconds:
+                        self.last_triggered[key] = now
+
+                        alarm = self.generate_alarm(
+                            sensor_data, parameter, value, severity,
+                            self.thresholds[parameter][severity]
+                        )
+                        self.publish_alarm(alarm)
 
     def check_severity(self, parameter, value):
         thresholds = self.thresholds.get(parameter)

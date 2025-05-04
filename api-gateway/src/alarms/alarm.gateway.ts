@@ -1,19 +1,20 @@
-import { WebSocketGateway, WebSocketServer } from '@nestjs/websockets';
+import {
+  WebSocketGateway,
+  WebSocketServer,
+  OnGatewayInit,
+} from '@nestjs/websockets';
 import { Server } from 'socket.io';
-import { MessagePattern, Payload } from '@nestjs/microservices';
-import { AlarmResponseDto } from './dto/alarm-response.dto';
+import { AlarmNotifierService } from './alarm-notifier.service';
 
-@WebSocketGateway({
-  cors: {
-    origin: '*',
-  },
-})
-export class AlarmGateway {
+@WebSocketGateway({ cors: { origin: '*' } })
+export class AlarmGateway implements OnGatewayInit {
   @WebSocketServer()
   server: Server;
 
-  @MessagePattern('alarm_created')
-  handleAlarmCreated(@Payload() alarm: AlarmResponseDto) {
-    this.server.emit('new-alarm', alarm);
+  constructor(private readonly notifier: AlarmNotifierService) {}
+
+  afterInit(server: Server) {
+    this.notifier.setSocketServer(server);
+    console.log('[GATEWAY] WebSocket server initialized');
   }
 }

@@ -1,6 +1,6 @@
 import { ApiPropertyOptional } from '@nestjs/swagger';
 import { IsOptional, IsString, IsEnum, IsDateString } from 'class-validator';
-import { AlarmSeverity } from './alarm-response.dto';
+import { AlarmParameter, AlarmSeverity } from './alarm-response.dto';
 
 export class AlarmQueryDto {
   @ApiPropertyOptional({ example: 'stockpile-area' })
@@ -12,6 +12,11 @@ export class AlarmQueryDto {
   @IsOptional()
   @IsString()
   sensorId?: string;
+
+  @ApiPropertyOptional({ enum: AlarmParameter, example: AlarmParameter.PM10 })
+  @IsOptional()
+  @IsEnum(AlarmParameter)
+  parameter?: AlarmParameter;
 
   @ApiPropertyOptional({ enum: AlarmSeverity, example: AlarmSeverity.HIGH })
   @IsOptional()

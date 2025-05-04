@@ -1,8 +1,8 @@
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
-import { WaterQualityDashboard } from "@/components/water-quality-dashboard";
+import { WaterQualityDashboard } from "@/components/water-quality/water-quality-dashboard";
 import { WasteManagementDashboard } from "@/components/waste-management-dashboard";
 import { TerritorialImpactDashboard } from "@/components/territorial-impact-dashboard";
-import { AirQualityDashboard } from "@/components/air-quality";
+import { AirQualityDashboard } from "@/components/air-quality/air-quality-dashboard";
 
 export default function DashboardPage() {
   return (

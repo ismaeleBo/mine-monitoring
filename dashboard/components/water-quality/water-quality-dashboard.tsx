@@ -19,10 +19,10 @@ import { ChartType } from "@/lib/types/common";
 import { useMonitoringData } from "@/hooks/useMonitoringData";
 import { MonitoringConfigKeys } from "@/lib/config/monitoring-config";
 import { MetricCard } from "../metric-card";
-import { airParameters } from "@/lib/constants/monitoring";
-import { AIR_QUALITY_LOCATION_LABELS } from "@/lib/constants/locations";
+import { waterParameters } from "@/lib/constants/monitoring";
+import { WATER_QUALITY_LOCATION_LABELS } from "@/lib/constants/locations";
 
-export function AirQualityDashboard() {
+export function WaterQualityDashboard() {
   const [location, setLocation] = useState("all");
   const [chartType, setChartType] = useState<ChartType>("line");
   const [dateRange, setDateRange] = useState<DateRange | undefined>({
@@ -31,7 +31,7 @@ export function AirQualityDashboard() {
   });
 
   const { historicalData, averages, loading, error } = useMonitoringData(
-    MonitoringConfigKeys.AIR,
+    MonitoringConfigKeys.WATER,
     location,
     dateRange
   );
@@ -47,14 +47,14 @@ export function AirQualityDashboard() {
       <Card className="col-span-full">
         <CardHeader className="flex flex-col md:flex-row items-start md:items-center justify-between gap-4">
           <div>
-            <CardTitle>Air Quality Overview</CardTitle>
+            <CardTitle>Water Quality Overview</CardTitle>
             <CardDescription>
-              Realtime air quality monitoring across mining zones
+              Realtime water quality monitoring across mining zones
             </CardDescription>
           </div>
           <div className="flex flex-wrap items-center gap-2">
             <LocationSelector
-              locationList={AIR_QUALITY_LOCATION_LABELS}
+              locationList={WATER_QUALITY_LOCATION_LABELS}
               location={location}
               setLocation={setLocation}
             />
@@ -99,7 +99,7 @@ export function AirQualityDashboard() {
         {!error && historicalData.length > 0 && (
           <CardContent>
             <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-3">
-              {airParameters.map(({ key, title, unit }) => (
+              {waterParameters.map(({ key, title, unit }) => (
                 <MetricCard
                   key={key}
                   parameterKey={key}

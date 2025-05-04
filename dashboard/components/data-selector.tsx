@@ -11,19 +11,20 @@ import { Button } from "@/components/ui/button";
 import { Download } from "lucide-react";
 import { DailyAverageDto } from "@/lib/types/air-quality";
 import { downloadAirQualityData } from "@/lib/data-formatters";
-import { LOCATION_LABELS } from "@/lib/constants/locations";
 
-interface DataSelectorProps {
+interface LocationSelectorProps {
   location: string;
+  locationList: Record<string, string>;
   setLocation: (value: string) => void;
   airQualityData?: DailyAverageDto[];
 }
 
-export function DataSelector({
+export function LocationSelector({
   location,
   setLocation,
+  locationList,
   airQualityData = [],
-}: DataSelectorProps) {
+}: LocationSelectorProps) {
   return (
     <div className="flex items-center gap-2">
       <Select value={location} onValueChange={setLocation}>
@@ -32,7 +33,7 @@ export function DataSelector({
         </SelectTrigger>
         <SelectContent>
           <SelectItem value="all">All Locations</SelectItem>
-          {Object.entries(LOCATION_LABELS).map(([value, label]) => (
+          {Object.entries(locationList).map(([value, label]) => (
             <SelectItem key={value} value={value}>
               {label}
             </SelectItem>

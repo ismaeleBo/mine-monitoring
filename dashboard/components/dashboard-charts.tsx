@@ -18,6 +18,7 @@ import {
 import { format } from "date-fns";
 import { ChartContainer, ChartTooltipContent } from "@/components/ui/chart";
 import { ChartData } from "@/lib/types/common";
+import { formatDynamicDecimals } from "@/lib/utils";
 
 const COLORS = [
   "hsl(var(--chart-1))",
@@ -63,13 +64,13 @@ export function SimpleLineChart({
           />
           <YAxis
             tick={{ fontSize: 12 }}
-            tickFormatter={(value) => value.toFixed(2)}
+            tickFormatter={(value) => formatDynamicDecimals(value)}
             domain={["auto", "auto"]}
           />
           <Tooltip
             content={<ChartTooltipContent />}
             formatter={(value: number) => {
-              return [`${value.toFixed(2)} ${unit}`];
+              return [`${formatDynamicDecimals(value)} ${unit}`];
             }}
             labelFormatter={(label) =>
               format(new Date(label), "dd/MM/yy HH:mm")
@@ -129,12 +130,12 @@ export function SimpleBarChart({
           />
           <YAxis
             tick={{ fontSize: 12 }}
-            tickFormatter={(value) => value.toFixed(2)}
+            tickFormatter={(value) => formatDynamicDecimals(value)}
           />
           <Tooltip
             content={<ChartTooltipContent />}
             formatter={(value: number) => {
-              return [`${value.toFixed(2)} ${unit}`];
+              return [`${formatDynamicDecimals(value)} ${unit}`];
             }}
             labelFormatter={(label) =>
               format(new Date(label), "dd/MM/yy HH:mm")
@@ -183,7 +184,7 @@ export function SimplePieChart({
         </Pie>
         <Tooltip
           formatter={(value: number) => {
-            return [`${value.toFixed(2)}`];
+            return [`${formatDynamicDecimals(value)}`];
           }}
           labelFormatter={(label) => format(new Date(label), "dd/MM/yy HH:mm")}
         />

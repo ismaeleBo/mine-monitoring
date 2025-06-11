@@ -10,23 +10,12 @@ async function bootstrap() {
 
   const app = await NestFactory.create(AppModule);
 
-  // Configuring the MQTT microservice to communicate with IoT devices
-  app.connectMicroservice<MicroserviceOptions>({
-    transport: Transport.MQTT,
-    options: {
-      url: process.env.MQTT_URL || 'mqtt://localhost:1883',
-      clientId: `air-quality-service-${Math.random().toString(16).slice(3)}`,
-      username: process.env.MQTT_USERNAME,
-      password: process.env.MQTT_PASSWORD,
-    },
-  });
-
   // Configuring the TCP microservice to communicate with the Gateway API
   app.connectMicroservice<MicroserviceOptions>({
     transport: Transport.TCP,
     options: {
       host: 'localhost',
-      port: 3002,
+      port: 4000,
     },
   });
 

@@ -1,0 +1,26 @@
+version: '3.9'
+
+services:
+  postgres:
+    image: postgres:15
+    container_name: postgres-air-quality
+    restart: always
+    environment:
+      POSTGRES_USER: ${DB_USERNAME}
+      POSTGRES_PASSWORD: ${DB_PASSWORD}
+      POSTGRES_DB: ${DB_DATABASE}
+    volumes: []
+    ports:
+      - '5432:5432'
+
+  air-quality-service:
+    build: .
+    container_name: air-quality-service
+    depends_on:
+      - postgres
+    env_file:
+      - .env
+    ports:
+      - '3002:3002'
+    volumes:
+      - ./mqtt-certs:/app/mqtt-certs:ro

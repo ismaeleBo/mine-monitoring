@@ -17,9 +17,10 @@ import { AirQualityMeasurement } from 'src/entities/air-quality-measurement.enti
         database: configService.get<string>('DB_DATABASE'),
         entities: [AirQualityMeasurement],
         synchronize: true,
-        ssl: {
-          rejectUnauthorized: false,
-        },
+        // Enable for production DB
+        // ssl: {
+        //   rejectUnauthorized: false,
+        // },
       }),
     }),
     TypeOrmModule.forFeature([AirQualityMeasurement]),

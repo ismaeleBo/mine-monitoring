@@ -89,7 +89,6 @@ export function useMonitoringData(
 
       return data;
     });
-    console.log("PARSED CHART DATA:", parsed);
 
     setHistoricalData(parsed);
   }, [rawData, isSingleDay]);

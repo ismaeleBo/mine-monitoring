@@ -17,9 +17,10 @@ import { Alarm } from 'src/entities/alarm.entity';
         database: configService.get<string>('DB_DATABASE'),
         entities: [Alarm],
         synchronize: true,
-        ssl: {
-          rejectUnauthorized: false,
-        },
+        // Enable for production DB
+        // ssl: {
+        //   rejectUnauthorized: false,
+        // },
       }),
     }),
     TypeOrmModule.forFeature([Alarm]),

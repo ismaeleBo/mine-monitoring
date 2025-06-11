@@ -33,7 +33,7 @@ export class MqttController implements OnModuleInit {
   onModuleInit() {
     // Subscribe to topic
     this.mqttService.subscribe(
-      'mining/air-quality/readings/#',
+      'mining/readings/air-quality/#',
       (topic: string, message: Buffer) => {
         void this.handleAirQualityMessage(topic, message);
       },

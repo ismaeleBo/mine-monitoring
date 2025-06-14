@@ -33,6 +33,7 @@ services:
       - ./air-quality-service/.env
     ports:
       - "3002:3002"
+      - "4002:4002"
     volumes:
       - ./mqtt-certs:/app/mqtt-certs:ro
 
@@ -47,6 +48,7 @@ services:
       - ./water-quality-service/.env
     ports:
       - "3004:3004"
+      - "4004:4004"
     volumes:
       - ./mqtt-certs:/app/mqtt-certs:ro
   # Alarms Service
@@ -60,5 +62,19 @@ services:
       - ./alarm-service/.env
     ports:
       - "3003:3003"
+      - "4003:4003"
     volumes:
       - ./mqtt-certs:/app/mqtt-certs:ro
+  # API Gateway
+  api-gateway:
+    build:
+      context: ./api-gateway
+    container_name: api-gateway
+    depends_on:
+      - air-quality-service
+      - water-quality-service
+      - alarm-service
+    env_file:
+      - ./api-gateway/.env
+    ports:
+      - "3010:3010"

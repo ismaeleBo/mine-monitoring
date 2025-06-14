@@ -9,8 +9,8 @@ import { AirQualityController } from './air-quality.controller';
         name: 'AIR_QUALITY_SERVICE',
         transport: Transport.TCP,
         options: {
-          host: 'localhost',
-          port: 3002,
+          host: process.env.AIR_QUALITY_HOST || 'localhost',
+          port: Number(process.env.AIR_QUALITY_PORT || 4002),
         },
       },
     ]),

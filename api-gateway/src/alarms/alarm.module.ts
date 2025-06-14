@@ -12,8 +12,8 @@ import { AlarmNotifierService } from './alarm-notifier.service';
         name: 'ALARM_SERVICE',
         transport: Transport.TCP,
         options: {
-          host: 'localhost',
-          port: 3003,
+          host: process.env.ALARMS_HOST || 'localhost',
+          port: Number(process.env.ALARMS_PORT || 4003),
         },
       },
     ]),

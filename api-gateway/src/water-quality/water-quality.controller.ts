@@ -49,9 +49,27 @@ export class WaterQualityController {
   }
 
   @Get('/stats/daily-average')
-  @ApiOperation({ summary: 'Get daily averages' })
-  @ApiQuery({ name: 'startDate', required: true })
-  @ApiQuery({ name: 'endDate', required: true })
+  @ApiOperation({ summary: 'Get daily averages for air quality parameters' })
+  @ApiQuery({
+    name: 'startDate',
+    required: true,
+    description: 'Start date (YYYY-MM-DD)',
+  })
+  @ApiQuery({
+    name: 'endDate',
+    required: true,
+    description: 'End date (YYYY-MM-DD)',
+  })
+  @ApiQuery({
+    name: 'sensorId',
+    required: false,
+    description: 'Optional sensor ID filter',
+  })
+  @ApiQuery({
+    name: 'location',
+    required: false,
+    description: 'Optional location filter',
+  })
   @ApiResponse({ status: 200, type: [WaterDailyAverageDto] })
   async getDailyAverages(
     @Query('startDate') startDate: string,

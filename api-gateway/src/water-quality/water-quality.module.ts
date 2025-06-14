@@ -9,8 +9,8 @@ import { WaterQualityController } from './water-quality.controller';
         name: 'WATER_QUALITY_SERVICE',
         transport: Transport.TCP,
         options: {
-          host: 'localhost',
-          port: 3004,
+          host: process.env.WATER_QUALITY_HOST || 'localhost',
+          port: Number(process.env.WATER_QUALITY_PORT || 4004),
         },
       },
     ]),

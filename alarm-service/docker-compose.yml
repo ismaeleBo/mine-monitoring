@@ -22,5 +22,6 @@ services:
       - .env
     ports:
       - '3003:3003'
+      - '4003:4003'
     volumes:
       - ./mqtt-certs:/app/mqtt-certs:ro

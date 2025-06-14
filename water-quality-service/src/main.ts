@@ -10,20 +10,10 @@ async function bootstrap() {
   const app = await NestFactory.create(AppModule);
 
   app.connectMicroservice<MicroserviceOptions>({
-    transport: Transport.MQTT,
-    options: {
-      url: process.env.MQTT_URL || 'mqtt://localhost:1883',
-      clientId: `water-quality-service-${Math.random().toString(16).slice(3)}`,
-      username: process.env.MQTT_USERNAME,
-      password: process.env.MQTT_PASSWORD,
-    },
-  });
-
-  app.connectMicroservice<MicroserviceOptions>({
     transport: Transport.TCP,
     options: {
       host: 'localhost',
-      port: 3004,
+      port: 4001,
     },
   });
 

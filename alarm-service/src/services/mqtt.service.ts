@@ -1,6 +1,7 @@
 import { Injectable, Logger, OnModuleDestroy } from '@nestjs/common';
 import * as mqtt from 'mqtt';
 import { matches } from 'mqtt-pattern';
+import * as fs from 'fs';
 
 @Injectable()
 export class MqttService implements OnModuleDestroy {
@@ -12,14 +13,20 @@ export class MqttService implements OnModuleDestroy {
   }> = [];
 
   constructor() {
-    this.client = mqtt.connect(
-      process.env.MQTT_URL || 'mqtt://localhost:1883',
-      {
-        clientId: `alarm-service-${Math.random().toString(16).slice(2)}`,
-        username: process.env.MQTT_USERNAME,
-        password: process.env.MQTT_PASSWORD,
-      },
-    );
+    const url = process.env.MQTT_HOST || 'localhost';
+
+    this.client = mqtt.connect({
+      hostname: url,
+      clientId: `alarm-service-${Math.random().toString(16).slice(2)}`,
+      username: process.env.MQTT_USERNAME,
+      password: process.env.MQTT_PASSWORD,
+      protocol: 'mqtts',
+      port: 8883,
+      rejectUnauthorized: true,
+      ca: fs.readFileSync(process.env.MQTT_CA_PATH!),
+      cert: fs.readFileSync(process.env.MQTT_CERT_PATH!),
+      key: fs.readFileSync(process.env.MQTT_KEY_PATH!),
+    });
 
     this.client.on('connect', () => {
       this.logger.log('[MQTT] Connesso al broker MQTT');

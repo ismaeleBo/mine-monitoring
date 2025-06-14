@@ -1,5 +1,6 @@
 import { Injectable } from '@nestjs/common';
 import * as mqtt from 'mqtt';
+import * as fs from 'fs';
 
 @Injectable()
 export class MqttService {
@@ -8,16 +9,23 @@ export class MqttService {
   private resolveReady!: () => void;
 
   constructor() {
-    const url = process.env.MQTT_URL || 'mqtt://localhost:1883';
+    const url = process.env.MQTT_HOST || 'localhost';
 
     this.clientReady = new Promise((resolve) => {
       this.resolveReady = resolve;
     });
 
-    this.client = mqtt.connect(url, {
-      clientId: `air-quality-service-${Math.random().toString(16).slice(3)}`,
+    this.client = mqtt.connect({
+      hostname: url,
+      clientId: `water-quality-service-${Math.random().toString(16).slice(3)}`,
       username: process.env.MQTT_USERNAME,
       password: process.env.MQTT_PASSWORD,
+      protocol: 'mqtts',
+      port: 8883,
+      rejectUnauthorized: true,
+      ca: fs.readFileSync(process.env.MQTT_CA_PATH!),
+      cert: fs.readFileSync(process.env.MQTT_CERT_PATH!),
+      key: fs.readFileSync(process.env.MQTT_KEY_PATH!),
     });
 
     this.client.on('connect', () => {

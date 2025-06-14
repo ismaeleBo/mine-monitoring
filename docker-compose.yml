@@ -1,0 +1,64 @@
+version: "3.9"
+
+services:
+  # Air Quality DB
+  postgres-air-quality:
+    image: postgres:15
+    container_name: postgres-air-quality
+    restart: always
+    env_file:
+      - ./air-quality-service/dbinit.env
+  # Water Quality DB
+  postgres-water-quality:
+    image: postgres:15
+    container_name: postgres-water-quality
+    restart: always
+    env_file:
+      - ./water-quality-service/dbinit.env
+  # Alarms DB
+  postgres-alarms-notify:
+    image: postgres:15
+    container_name: postgres-alarms-notify
+    restart: always
+    env_file:
+      - ./alarm-service/dbinit.env
+  # Air Quality Service
+  air-quality-service:
+    build:
+      context: ./air-quality-service
+    container_name: air-quality-service
+    depends_on:
+      - postgres-air-quality
+    env_file:
+      - ./air-quality-service/.env
+    ports:
+      - "3002:3002"
+    volumes:
+      - ./mqtt-certs:/app/mqtt-certs:ro
+
+  # Water Quality Service
+  water-quality-service:
+    build:
+      context: ./water-quality-service
+    container_name: water-quality-service
+    depends_on:
+      - postgres-water-quality
+    env_file:
+      - ./water-quality-service/.env
+    ports:
+      - "3004:3004"
+    volumes:
+      - ./mqtt-certs:/app/mqtt-certs:ro
+  # Alarms Service
+  alarm-service:
+    build:
+      context: ./alarm-service
+    container_name: alarm-service
+    depends_on:
+      - postgres-alarms-notify
+    env_file:
+      - ./alarm-service/.env
+    ports:
+      - "3003:3003"
+    volumes:
+      - ./mqtt-certs:/app/mqtt-certs:ro

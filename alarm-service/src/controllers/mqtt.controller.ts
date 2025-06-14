@@ -3,6 +3,7 @@ import { AlarmService } from '../services/alarm.service';
 import { MqttService } from '../services/mqtt.service';
 import { AlarmSeverity, CreateAlarmDto } from '../dto/create-alarm.dto';
 import { validateOrReject } from 'class-validator';
+import { plainToInstance } from 'class-transformer';
 
 export interface RawAlarmMessage {
   sensor_id: string;
@@ -44,7 +45,7 @@ export class MqttController implements OnModuleInit {
 
       const rawPayload = JSON.parse(message.toString()) as RawAlarmMessage;
 
-      const alarm: CreateAlarmDto = {
+      const alarm = plainToInstance(CreateAlarmDto, {
         sensorId: rawPayload.sensor_id,
         timestamp: rawPayload.timestamp,
         location: rawPayload.location,
@@ -52,7 +53,7 @@ export class MqttController implements OnModuleInit {
         measuredValue: rawPayload.measured_value,
         thresholdExceeded: rawPayload.threshold_exceeded,
         severity: rawPayload.severity,
-      };
+      });
 
       await validateOrReject(alarm);
 

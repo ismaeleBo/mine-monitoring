@@ -8,7 +8,7 @@ export interface SocketClientEvents {
 }
 
 export function getSocket(): Socket<SocketClientEvents> {
-  if (!socket) {
+  if (!socket || socket.disconnected) {
     socket = io(process.env.NEXT_PUBLIC_API_URL);
     socket.on("connect", () => {
       console.log("[Socket] Connected");

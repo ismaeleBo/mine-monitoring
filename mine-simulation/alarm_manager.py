@@ -51,18 +51,15 @@ class AlarmManager:
 
     def check_severity(self, parameter, value):
         param_thresholds = self.thresholds.get(parameter)
-
         if not param_thresholds or not isinstance(param_thresholds, dict):
             return None
 
-        thresholds = list(param_thresholds.items())
+        # Determine if increasing thresholds are worse or better
+        is_increasing = list(param_thresholds.values())[0] < list(param_thresholds.values())[-1]
 
-        # Determines whether it is an increasing or decreasing parameter
-        is_increasing = thresholds[0][1] < thresholds[-1][1]
-
-        # Sort thresholds from least serious to most serious based on type
+        # Sort thresholds from most to least severe
         sorted_thresholds = (
-            thresholds if is_increasing else list(reversed(thresholds))
+            reversed(param_thresholds.items()) if is_increasing else param_thresholds.items()
         )
 
         for severity, threshold in sorted_thresholds:
@@ -72,7 +69,6 @@ class AlarmManager:
                 return severity
 
         return None
-
 
     def generate_alarm(self, sensor_data, parameter, value, severity, threshold):
         return {

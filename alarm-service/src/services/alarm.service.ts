@@ -88,7 +88,7 @@ export class AlarmService {
   ): Promise<{ data: Alarm[]; total: number }> {
     const qb = this.alarmRepository.createQueryBuilder('alarm');
 
-    // Apply filters (same as findByFilters)
+    // Apply filters
     if (query.location)
       qb.andWhere('alarm.location = :location', { location: query.location });
     if (query.sensorId)

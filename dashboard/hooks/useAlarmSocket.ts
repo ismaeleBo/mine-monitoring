@@ -15,12 +15,14 @@ export function useAlarmNotifications() {
   useEffect(() => {
     const socket = getSocket();
 
-    socket.on("new-alarm", (alarm: Alarm) => {
+    const handleNewAlarm = (alarm: Alarm) => {
       showAlarmToast(alarm, router);
-    });
+    };
+
+    socket.on("new-alarm", handleNewAlarm);
 
     return () => {
-      socket.disconnect();
+      socket.off("new-alarm", handleNewAlarm);
     };
   }, []);
 }

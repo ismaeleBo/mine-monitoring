@@ -68,12 +68,14 @@ export default function AlarmsPage() {
 
     fetchAlarms();
 
-    socket.on("new-alarm", (alarm: Alarm) => {
+    const handleNewAlarm = () => {
       fetchAlarms();
-    });
+    };
+
+    socket.on("new-alarm", handleNewAlarm);
 
     return () => {
-      socket.disconnect();
+      socket.off("new-alarm", handleNewAlarm);
     };
   }, [socket, location, severity, sensorId, dateRange, page, parameter]);
 

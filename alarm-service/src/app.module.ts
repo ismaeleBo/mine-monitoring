@@ -21,8 +21,8 @@ import { AlarmMicroserviceController } from './controllers/alarm.microservice.co
         name: 'ALARM_NOTIFIER',
         transport: Transport.TCP,
         options: {
-          host: 'localhost',
-          port: 3001,
+          host: process.env.GATEWAY_HOST || 'localhost',
+          port: Number(process.env.GATEWAY_PORT || 4000),
         },
       },
     ]),

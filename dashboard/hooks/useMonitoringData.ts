@@ -31,8 +31,8 @@ export function useMonitoringData(
     setLoading(true);
     try {
       let url = isSingleDay
-        ? `http://localhost:3010/${config.endpoint}/stats/daily-measurements`
-        : `http://localhost:3010/${config.endpoint}/stats/daily-average`;
+        ? `${process.env.NEXT_PUBLIC_API_URL}/${config.endpoint}/stats/daily-measurements`
+        : `${process.env.NEXT_PUBLIC_API_URL}/${config.endpoint}/stats/daily-average`;
 
       const params = new URLSearchParams();
 

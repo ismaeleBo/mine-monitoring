@@ -9,7 +9,7 @@ export interface SocketClientEvents {
 
 export function getSocket(): Socket<SocketClientEvents> {
   if (!socket) {
-    socket = io("http://localhost:3010");
+    socket = io(process.env.NEXT_PUBLIC_API_URL);
     socket.on("connect", () => {
       console.log("[Socket] Connected");
     });

@@ -58,7 +58,7 @@ export default function AlarmsPage() {
       params.append("limit", LIMIT.toString());
 
       const res = await fetch(
-        `http://localhost:3010/alarms?${params.toString()}`
+        `${process.env.NEXT_PUBLIC_API_URL}/alarms?${params.toString()}`
       );
       const json = await res.json();
       setAlarms(json.data);

@@ -23,7 +23,7 @@ class StateEngine:
 
     def trigger_random_event(self):
         """With a low probability it generates an extraordinary event in an area"""
-        if random.random() < 0.005:  # probability per tick
+        if random.random() < 0.001:  # probability per tick
             profile = random.choice(EVENT_PROFILES)
             zone = random.choice(self.zones)
             event = Event(

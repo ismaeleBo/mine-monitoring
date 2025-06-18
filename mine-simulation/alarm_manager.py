@@ -99,6 +99,18 @@ class AlarmManager:
         }
 
     def publish_alarm(self, alarm_payload):
-        topic = f"mining/alerts/{alarm_payload['location']}/{alarm_payload['severity']}/{alarm_payload['sensor_id']}"
+        sensor_id = alarm_payload['sensor_id']
+        parameter = alarm_payload['parameter']
+        topic = f"mining/alerts/{alarm_payload['location']}/{alarm_payload['severity']}/{sensor_id}"
+
+        now = datetime.datetime.utcnow()
+        last = self.last_triggered.get((sensor_id, parameter))
+
+        # Suppress repeated alarms within cooldown window
+        if last and (now - last).total_seconds() < self.cooldown_seconds:
+            return
+
+        self.last_triggered[(sensor_id, parameter)] = now
+
         self.mqtt_client.publish(topic, json.dumps(alarm_payload))
-        print(f"[ALARM] {alarm_payload['severity']} - {alarm_payload['parameter']} = {alarm_payload['measured_value']} in {alarm_payload['location']} (Sensor {alarm_payload['sensor_id']})")
+        print(f"[ALARM] {alarm_payload['severity']} - {parameter} = {alarm_payload['measured_value']} in {alarm_payload['location']} (Sensor {sensor_id})")

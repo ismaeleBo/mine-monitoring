@@ -54,7 +54,7 @@ class StateEngine:
             'air_quality': 'air-quality',
             'water_quality': 'water-quality',
             'soil_quality': 'soil-quality',
-            'production': 'production-monitoring',
+            'production_metrics': 'production-monitoring',
         }
         return mapping.get(sensor_type, 'misc')
 
@@ -70,7 +70,7 @@ class StateEngine:
             packets = zone.update_sensors()
             for packet in packets:
                 service_prefix = self.get_service_prefix(packet['type'])
-                topic = f"mining/{service_prefix}/readings/{self.site_id}/{packet['location']}/{packet['sensor_id']}"
+                topic = f"mining/readings/{service_prefix}/{self.site_id}/{packet['location']}/{packet['sensor_id']}"
                 message = json.dumps(packet)
                 self.mqtt_client.publish(topic, message)
                 print(f"[PUBLISH] {topic} -> {message}")

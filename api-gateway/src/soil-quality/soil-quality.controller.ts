@@ -10,46 +10,46 @@ import {
 import { ClientProxy } from '@nestjs/microservices';
 import { firstValueFrom } from 'rxjs';
 import { ApiTags, ApiOperation, ApiResponse, ApiQuery } from '@nestjs/swagger';
-import { WaterQualityQueryParamsDto } from './dto/query-params.dto';
-import { WaterQualityResponseDto } from './dto/water-quality-response.dto';
-import { WaterDailyAverageDto } from './dto/daily-average.dto';
+import { SoilQualityQueryParamsDto } from './dto/query-params.dto';
+import { SoilQualityResponseDto } from './dto/soil-quality-response.dto';
+import { SoilDailyAverageDto } from './dto/daily-average.dto';
 import { DailyMeasurementsResponse } from './dto/daily-measurements-response.dto';
 
-@ApiTags('water-quality')
-@Controller('water-quality')
-export class WaterQualityController {
+@ApiTags('soil-quality')
+@Controller('soil-quality')
+export class SoilQualityController {
   constructor(
-    @Inject('WATER_QUALITY_SERVICE')
-    private readonly waterQualityClient: ClientProxy,
+    @Inject('SOIL_QUALITY_SERVICE')
+    private readonly soilQualityClient: ClientProxy,
   ) {}
 
   @Get('/:id')
-  @ApiOperation({ summary: 'Get water quality reading by ID' })
-  @ApiResponse({ status: 200, type: WaterQualityResponseDto })
+  @ApiOperation({ summary: 'Get soil quality reading by ID' })
+  @ApiResponse({ status: 200, type: SoilQualityResponseDto })
   async getReadingById(
     @Param('id') id: string,
-  ): Promise<WaterQualityResponseDto> {
+  ): Promise<SoilQualityResponseDto> {
     return firstValueFrom(
-      this.waterQualityClient.send({ cmd: 'get_water_quality_reading' }, id),
+      this.soilQualityClient.send({ cmd: 'get_soil_quality_reading' }, id),
     );
   }
 
   @Get()
   @ApiOperation({ summary: 'Search readings with filters' })
-  @ApiResponse({ status: 200, type: [WaterQualityResponseDto] })
+  @ApiResponse({ status: 200, type: [SoilQualityResponseDto] })
   async search(
-    @Query() query: WaterQualityQueryParamsDto,
-  ): Promise<WaterQualityResponseDto[]> {
+    @Query() query: SoilQualityQueryParamsDto,
+  ): Promise<SoilQualityResponseDto[]> {
     return firstValueFrom(
-      this.waterQualityClient.send(
-        { cmd: 'search_water_quality_readings' },
+      this.soilQualityClient.send(
+        { cmd: 'search_soil_quality_readings' },
         query,
       ),
     );
   }
 
   @Get('/stats/daily-average')
-  @ApiOperation({ summary: 'Get daily averages for water quality parameters' })
+  @ApiOperation({ summary: 'Get daily averages for soil quality parameters' })
   @ApiQuery({
     name: 'startDate',
     required: true,
@@ -70,20 +70,20 @@ export class WaterQualityController {
     required: false,
     description: 'Optional location filter',
   })
-  @ApiResponse({ status: 200, type: [WaterDailyAverageDto] })
+  @ApiResponse({ status: 200, type: [SoilDailyAverageDto] })
   async getDailyAverages(
     @Query('startDate') startDate: string,
     @Query('endDate') endDate: string,
     @Query('sensorId') sensorId?: string,
     @Query('location') location?: string,
-  ): Promise<WaterDailyAverageDto[]> {
+  ): Promise<SoilDailyAverageDto[]> {
     if (!startDate || !endDate) {
       throw new BadRequestException('startDate and endDate are required');
     }
 
     return firstValueFrom(
-      this.waterQualityClient.send(
-        { cmd: 'get_water_quality_daily_averages' },
+      this.soilQualityClient.send(
+        { cmd: 'get_soil_quality_daily_averages' },
         { startDate, endDate, sensorId, location },
       ),
     );
@@ -111,15 +111,15 @@ export class WaterQualityController {
     }
 
     const response = await firstValueFrom(
-      this.waterQualityClient.send<DailyMeasurementsResponse[]>(
-        { cmd: 'get_water_quality_daily_measurements' },
+      this.soilQualityClient.send<DailyMeasurementsResponse[]>(
+        { cmd: 'get_soil_quality_daily_measurements' },
         { date: parsedDate.toISOString(), location },
       ),
     );
 
     if (!response) {
       throw new InternalServerErrorException(
-        'No data received from Water Quality Microservice.',
+        'No data received from Soil Quality Microservice.',
       );
     }
 

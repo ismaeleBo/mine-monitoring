@@ -37,7 +37,7 @@ class StateEngine:
 
     def trigger_random_operation(self):
         """Generate standard operations with higher probability"""
-        if random.random() < 0.1:  # probability per tick
+        if random.random() < 0.005:  # probability per tick
             profile = random.choice(OPERATION_PROFILES)
             zone = random.choice(self.zones)
             operation = Operation(
@@ -53,9 +53,8 @@ class StateEngine:
         mapping = {
             'air_quality': 'air-quality',
             'water_quality': 'water-quality',
-            'soil_quality': 'land-impact',
+            'soil_quality': 'soil-quality',
             'production': 'production-monitoring',
-            'voc_air': 'air-quality',
         }
         return mapping.get(sensor_type, 'misc')
 

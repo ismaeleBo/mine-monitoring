@@ -15,6 +15,13 @@ services:
     restart: always
     env_file:
       - ./water-quality-service/dbinit.env
+    # Soil Quality DB
+  postgres-soil-quality:
+    image: postgres:15
+    container_name: postgres-soil-quality
+    restart: always
+    env_file:
+      - ./soil-quality-service/dbinit.env
   # Alarms DB
   postgres-alarms-notify:
     image: postgres:15
@@ -49,6 +56,20 @@ services:
     ports:
       - "3004:3004"
       - "4004:4004"
+    volumes:
+      - ./mqtt-certs:/app/mqtt-certs:ro
+  # Soil Quality Service
+  soil-quality-service:
+    build:
+      context: ./soil-quality-service
+    container_name: soil-quality-service
+    depends_on:
+      - postgres-soil-quality
+    env_file:
+      - ./soil-quality-service/.env
+    ports:
+      - "3005:3005"
+      - "4005:4005"
     volumes:
       - ./mqtt-certs:/app/mqtt-certs:ro
   # Alarms Service

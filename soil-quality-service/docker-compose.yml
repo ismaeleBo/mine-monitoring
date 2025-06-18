@@ -3,7 +3,7 @@ version: '3.9'
 services:
   postgres:
     image: postgres:15
-    container_name: postgres-water-quality
+    container_name: postgres-soil-quality
     restart: always
     environment:
       POSTGRES_USER: ${DB_USERNAME}
@@ -13,15 +13,15 @@ services:
     ports:
       - '5433:5432'
 
-  water-quality-service:
+  soil-quality-service:
     build: .
-    container_name: water-quality-service
+    container_name: soil-quality-service
     depends_on:
       - postgres
     env_file:
       - .env
     ports:
-      - '3004:3004'
-      - '4004:4004'
+      - '3005:3005'
+      - '4005:4005'
     volumes:
       - ./mqtt-certs:/app/mqtt-certs:ro

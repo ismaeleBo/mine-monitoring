@@ -15,3 +15,8 @@ export const waterParameters = [
   { key: "conductivity", title: "Conductivity", unit: "µS/cm" },
   { key: "as", title: "Arsenic", unit: "mg/L" },
 ];
+
+export const soilParameters = [
+  { key: "voc", title: "VOC", unit: "ppb" },
+  { key: "pb", title: "Arsenic", unit: "mg/Kg" },
+];

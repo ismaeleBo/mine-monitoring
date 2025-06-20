@@ -17,7 +17,15 @@ export const WATER_QUALITY_LOCATION_LABELS: Record<string, string> = {
   "drainage-channel": "Drainage channel",
 };
 
+export const SOIL_QUALITY_LOCATION_LABELS: Record<string, string> = {
+  "stockpile-area": "Stockpile Area",
+  "fuel-storage": "Fuel Storage",
+  perimeter: "Perimeter",
+  "workshop-area": "Workshop Area",
+};
+
 export const LOCATION_LABELS: Record<string, string> = {
   ...AIR_QUALITY_LOCATION_LABELS,
   ...WATER_QUALITY_LOCATION_LABELS,
+  ...SOIL_QUALITY_LOCATION_LABELS,
 };

@@ -2,7 +2,7 @@
 
 import { ALARM_PARAMETER_LABELS } from "@/lib/constants/alarms";
 import { LOCATION_LABELS } from "@/lib/constants/locations";
-import { getSocket } from "@/lib/socket";
+import { useSocket } from "@/lib/contexts/socket-context";
 import { Alarm, AlarmSeverity } from "@/lib/types/alarms";
 import { AppRouterInstance } from "next/dist/shared/lib/app-router-context.shared-runtime";
 import { useRouter } from "next/navigation";
@@ -13,7 +13,9 @@ export function useAlarmNotifications() {
   const router = useRouter();
 
   useEffect(() => {
-    const socket = getSocket();
+    const socket = useSocket();
+
+    if (!socket) return;
 
     const handleNewAlarm = (alarm: Alarm) => {
       showAlarmToast(alarm, router);

@@ -21,7 +21,7 @@ import {
   ALARM_PARAMETER_LABELS,
   ALARM_SEVERITY_LABELS,
 } from "@/lib/constants/alarms";
-import { getSocket } from "@/lib/socket";
+import { useSocket } from "@/lib/contexts/socket-context";
 
 const LIMIT = 10;
 
@@ -36,9 +36,10 @@ export default function AlarmsPage() {
   const [page, setPage] = useState(1);
   const [total, setTotal] = useState(0);
 
-  const socket = getSocket();
-
   useEffect(() => {
+    const socket = useSocket();
+    if (!socket) return;
+
     const fetchAlarms = async () => {
       setLoading(true);
       const params = new URLSearchParams();
@@ -73,11 +74,10 @@ export default function AlarmsPage() {
     };
 
     socket.on("new-alarm", handleNewAlarm);
-
     return () => {
       socket.off("new-alarm", handleNewAlarm);
     };
-  }, [socket, location, severity, sensorId, dateRange, page, parameter]);
+  }, [location, severity, sensorId, dateRange, page, parameter]);
 
   const totalPages = Math.ceil(total / LIMIT);
 

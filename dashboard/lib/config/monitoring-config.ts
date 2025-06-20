@@ -32,12 +32,10 @@ export const monitoringConfig = {
   },
   [MonitoringConfigKeys.SOIL]: {
     endpoint: "soil-quality",
-    parameters: ["ph", "lead", "arsenic", "conductivity"],
+    parameters: ["voc", "pb"],
     averageKeys: {
-      ph: "avgPh",
-      lead: "avgPb",
-      arsenic: "avgAs",
-      conductivity: "avgConductivity",
+      voc: "avgVoc",
+      pb: "avgPb",
     },
   },
   [MonitoringConfigKeys.PRODUCTION]: {

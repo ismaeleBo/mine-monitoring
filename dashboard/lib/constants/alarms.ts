@@ -19,11 +19,11 @@ export const ALARM_PARAMETER_LABELS: Record<
   [AlarmParameter.CO]: { label: "CO", unit: "ppm" },
   [AlarmParameter.NO2]: { label: "NO₂", unit: "ppb" },
   [AlarmParameter.O2]: { label: "O₂", unit: "%" },
-  [AlarmParameter.pH]: { label: "pH", unit: "" },
+  [AlarmParameter.pH]: { label: "pH", unit: " " },
   [AlarmParameter.CONDUCTIVITY]: { label: "Conductivity", unit: "µS/cm" },
   [AlarmParameter.DO]: { label: "Dissolved oxygen", unit: "mg/L" },
-  [AlarmParameter.AS]: { label: "Arsenic", unit: "mg/L" },
-  [AlarmParameter.PB]: { label: "Plumb", unit: "mg/L" },
+  [AlarmParameter.As]: { label: "Arsenic", unit: "mg/L" },
+  [AlarmParameter.Pb]: { label: "Plumb", unit: "mg/L" },
   [AlarmParameter.VOC]: { label: "VOC", unit: "ppb" },
   [AlarmParameter.EXTRACTED_MATERIAL]: {
     label: "Extracted material",
@@ -33,5 +33,13 @@ export const ALARM_PARAMETER_LABELS: Record<
   [AlarmParameter.MACHINE_OPERATING_HOURS]: {
     label: "Machine operating hours",
     unit: "h/day",
+  },
+  [AlarmParameter.CH4]: {
+    label: "CH4",
+    unit: "%",
+  },
+  [AlarmParameter.SO2]: {
+    label: "SO₂",
+    unit: "ppb",
   },
 };

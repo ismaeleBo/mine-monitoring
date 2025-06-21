@@ -21,6 +21,7 @@ async function bootstrap() {
     .addTag('air-quality')
     .addTag('water-quality')
     .addTag('soil-quality')
+    .addTag('production-monitoring')
     .addTag('alarms')
     .build();
 

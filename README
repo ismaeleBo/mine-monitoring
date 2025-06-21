@@ -1,0 +1,6 @@
+Add .env file where required
+Add dbinit.env file where required
+
+docker compose down -v --remove-orphans
+
+docker compose up -d --build

@@ -10,46 +10,51 @@ import {
 import { ClientProxy } from '@nestjs/microservices';
 import { firstValueFrom } from 'rxjs';
 import { ApiTags, ApiOperation, ApiResponse, ApiQuery } from '@nestjs/swagger';
-import { SoilQualityQueryParamsDto } from './dto/query-params.dto';
-import { SoilQualityResponseDto } from './dto/soil-quality-response.dto';
-import { SoilDailyAverageDto } from './dto/daily-average.dto';
 import { DailyMeasurementsResponse } from './dto/daily-measurements-response.dto';
+import { ProductionMonitoringResponseDto } from './dto/production-monitoring-response.dto';
+import { ProductionMonitoringQueryParamsDto } from './dto/query-params.dto';
+import { ProductionDailyAverageDto } from './dto/daily-average.dto';
 
-@ApiTags('soil-quality')
-@Controller('soil-quality')
-export class SoilQualityController {
+@ApiTags('production-monitoring')
+@Controller('production-monitoring')
+export class ProductionMonitoringController {
   constructor(
-    @Inject('SOIL_QUALITY_SERVICE')
-    private readonly soilQualityClient: ClientProxy,
+    @Inject('PRODUCTION_MONITORING_SERVICE')
+    private readonly productionMonitoringClient: ClientProxy,
   ) {}
 
   @Get('/:id')
-  @ApiOperation({ summary: 'Get soil quality reading by ID' })
-  @ApiResponse({ status: 200, type: SoilQualityResponseDto })
+  @ApiOperation({ summary: 'Get production monitoring reading by ID' })
+  @ApiResponse({ status: 200, type: ProductionMonitoringResponseDto })
   async getReadingById(
     @Param('id') id: string,
-  ): Promise<SoilQualityResponseDto> {
+  ): Promise<ProductionMonitoringResponseDto> {
     return firstValueFrom(
-      this.soilQualityClient.send({ cmd: 'get_soil_quality_reading' }, id),
+      this.productionMonitoringClient.send(
+        { cmd: 'get_production_monitoring_reading' },
+        id,
+      ),
     );
   }
 
   @Get()
   @ApiOperation({ summary: 'Search readings with filters' })
-  @ApiResponse({ status: 200, type: [SoilQualityResponseDto] })
+  @ApiResponse({ status: 200, type: [ProductionMonitoringResponseDto] })
   async search(
-    @Query() query: SoilQualityQueryParamsDto,
-  ): Promise<SoilQualityResponseDto[]> {
+    @Query() query: ProductionMonitoringQueryParamsDto,
+  ): Promise<ProductionMonitoringResponseDto[]> {
     return firstValueFrom(
-      this.soilQualityClient.send(
-        { cmd: 'search_soil_quality_readings' },
+      this.productionMonitoringClient.send(
+        { cmd: 'search_production_monitoring_readings' },
         query,
       ),
     );
   }
 
   @Get('/stats/daily-average')
-  @ApiOperation({ summary: 'Get daily averages for soil quality parameters' })
+  @ApiOperation({
+    summary: 'Get daily averages for production monitoring parameters',
+  })
   @ApiQuery({
     name: 'startDate',
     required: true,
@@ -70,20 +75,20 @@ export class SoilQualityController {
     required: false,
     description: 'Optional location filter',
   })
-  @ApiResponse({ status: 200, type: [SoilDailyAverageDto] })
+  @ApiResponse({ status: 200, type: [ProductionDailyAverageDto] })
   async getDailyAverages(
     @Query('startDate') startDate: string,
     @Query('endDate') endDate: string,
     @Query('sensorId') sensorId?: string,
     @Query('location') location?: string,
-  ): Promise<SoilDailyAverageDto[]> {
+  ): Promise<ProductionDailyAverageDto[]> {
     if (!startDate || !endDate) {
       throw new BadRequestException('startDate and endDate are required');
     }
 
     return firstValueFrom(
-      this.soilQualityClient.send(
-        { cmd: 'get_soil_quality_daily_averages' },
+      this.productionMonitoringClient.send(
+        { cmd: 'get_production_monitoring_daily_averages' },
         { startDate, endDate, sensorId, location },
       ),
     );
@@ -94,7 +99,7 @@ export class SoilQualityController {
   @ApiQuery({
     name: 'date',
     required: true,
-    description: 'Date to filter (YYYY-MM-DD)',
+    description: 'Date (YYYY-MM-DD)',
   })
   @ApiQuery({ name: 'location', required: false })
   @ApiResponse({ status: 200 })
@@ -115,15 +120,15 @@ export class SoilQualityController {
     }
 
     const response = await firstValueFrom(
-      this.soilQualityClient.send<DailyMeasurementsResponse[]>(
-        { cmd: 'get_soil_quality_daily_measurements' },
+      this.productionMonitoringClient.send<DailyMeasurementsResponse[]>(
+        { cmd: 'get_production_monitoring_daily_measurements' },
         { date: parsedDate.toISOString(), location },
       ),
     );
 
     if (!response) {
       throw new InternalServerErrorException(
-        'No data received from Soil Quality Microservice.',
+        'No data received from Production Monitoring Microservice.',
       );
     }
 

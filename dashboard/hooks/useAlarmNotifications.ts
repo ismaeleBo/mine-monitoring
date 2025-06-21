@@ -11,10 +11,9 @@ import { toast } from "sonner";
 
 export function useAlarmNotifications() {
   const router = useRouter();
+  const socket = useSocket();
 
   useEffect(() => {
-    const socket = useSocket();
-
     if (!socket) return;
 
     const handleNewAlarm = (alarm: Alarm) => {
@@ -26,7 +25,7 @@ export function useAlarmNotifications() {
     return () => {
       socket.off("new-alarm", handleNewAlarm);
     };
-  }, []);
+  }, [socket]);
 }
 
 function showAlarmToast(alarm: Alarm, router: AppRouterInstance) {

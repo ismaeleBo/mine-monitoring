@@ -18,5 +18,5 @@ export const waterParameters = [
 
 export const soilParameters = [
   { key: "voc", title: "VOC", unit: "ppb" },
-  { key: "pb", title: "Arsenic", unit: "mg/Kg" },
+  { key: "pb", title: "Pb", unit: "mg/Kg" },
 ];

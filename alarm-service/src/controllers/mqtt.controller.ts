@@ -41,7 +41,7 @@ export class MqttController implements OnModuleInit {
     message: Buffer,
   ): Promise<void> {
     try {
-      this.logger.debug(`[MQTT] Messaggio ricevuto su topic: ${topic}`);
+      this.logger.debug(`[MQTT] Message received on topic: ${topic}`);
 
       const rawPayload = JSON.parse(message.toString()) as RawAlarmMessage;
 
@@ -69,7 +69,7 @@ export class MqttController implements OnModuleInit {
         err instanceof Error
           ? err.message
           : 'Errore generico nella gestione MQTT';
-      this.logger.error(`[MQTT] Errore nel parsing o salvataggio: ${msg}`);
+      this.logger.error(`[MQTT] Error parsing or saving: ${msg}`);
     }
   }
 }

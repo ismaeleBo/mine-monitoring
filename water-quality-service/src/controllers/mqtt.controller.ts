@@ -39,7 +39,7 @@ export class MqttController implements OnModuleInit {
     topic: string,
     message: Buffer,
   ): Promise<void> {
-    this.logger.log(`[MQTT] Messaggio ricevuto sul topic: ${topic}`);
+    this.logger.log(`[MQTT] Message received on topic: ${topic}`);
     try {
       const rawPayload = JSON.parse(
         message.toString(),
@@ -62,9 +62,7 @@ export class MqttController implements OnModuleInit {
       this.logger.log(`[MQTT] Lettura registrata con ID=${saved.id}`);
     } catch (err) {
       const msg = err instanceof Error ? err.message : 'Errore sconosciuto';
-      this.logger.error(
-        `[MQTT] Errore durante la lettura del messaggio: ${msg}`,
-      );
+      this.logger.error(`[MQTT] Error reading message: ${msg}`);
     }
   }
 }

@@ -33,7 +33,7 @@ export class MqttService implements OnModuleDestroy {
     });
 
     this.client.on('error', (error) => {
-      this.logger.error(`[MQTT] Errore di connessione: ${error.message}`);
+      this.logger.error(`[MQTT] Connection error: ${error.message}`);
     });
 
     this.client.on('message', (incomingTopic, message) => {
@@ -51,9 +51,9 @@ export class MqttService implements OnModuleDestroy {
   ): void {
     this.client.subscribe(topic, (err) => {
       if (err) {
-        this.logger.error(`[MQTT] Errore nella sottoscrizione a ${topic}`);
+        this.logger.error(`[MQTT] Subscription error on topic: ${topic}`);
       } else {
-        this.logger.log(`[MQTT] Sottoscritto al topic: ${topic}`);
+        this.logger.log(`[MQTT] Subscribed to the topic: ${topic}`);
       }
     });
 

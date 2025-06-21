@@ -35,9 +35,9 @@ export default function AlarmsPage() {
   const [dateRange, setDateRange] = useState<DateRange>();
   const [page, setPage] = useState(1);
   const [total, setTotal] = useState(0);
+  const socket = useSocket();
 
   useEffect(() => {
-    const socket = useSocket();
     if (!socket) return;
 
     const fetchAlarms = async () => {
@@ -77,7 +77,7 @@ export default function AlarmsPage() {
     return () => {
       socket.off("new-alarm", handleNewAlarm);
     };
-  }, [location, severity, sensorId, dateRange, page, parameter]);
+  }, [socket, location, severity, sensorId, dateRange, page, parameter]);
 
   const totalPages = Math.ceil(total / LIMIT);
 

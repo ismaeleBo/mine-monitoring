@@ -48,7 +48,7 @@ export function downloadAirQualityData(data: DailyAverageDto[]) {
 export function formatDustData(data: ChartData[]): ChartData[] {
   return data.map((item) => ({
     name: item.name,
-    value: ((item.pm25 ?? 0) + (item.pm10 ?? 0)) / 2,
+    value: ((Number(item.pm25) ?? 0) + (Number(item.pm10) ?? 0)) / 2,
   }));
 }
 

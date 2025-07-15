@@ -24,8 +24,19 @@ export const SOIL_QUALITY_LOCATION_LABELS: Record<string, string> = {
   "workshop-area": "Workshop Area",
 };
 
+export const PRODUCTION_MONITORING_LOCATION_LABELS: Record<string, string> = {
+  "stockpile-area": "Stockpile Area",
+  "fuel-storage": "Fuel Storage",
+  "internal-roads": "Internal Roads",
+  "workshop-area": "Workshop Area",
+  "loading-zone": "Loading Zone",
+  "machine-fleet": "Machine Fleet",
+  "openpit-sector": "Openpit Sector",
+};
+
 export const LOCATION_LABELS: Record<string, string> = {
   ...AIR_QUALITY_LOCATION_LABELS,
   ...WATER_QUALITY_LOCATION_LABELS,
   ...SOIL_QUALITY_LOCATION_LABELS,
+  ...PRODUCTION_MONITORING_LOCATION_LABELS,
 };

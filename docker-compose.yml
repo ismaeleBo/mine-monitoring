@@ -8,6 +8,9 @@ services:
     restart: always
     env_file:
       - ./air-quality-service/dbinit.env
+    volumes:
+      - postgres-air-quality-data:/var/lib/postgresql/data
+
   # Water Quality DB
   postgres-water-quality:
     image: postgres:15
@@ -15,13 +18,29 @@ services:
     restart: always
     env_file:
       - ./water-quality-service/dbinit.env
-    # Soil Quality DB
+    volumes:
+      - postgres-water-quality-data:/var/lib/postgresql/data
+
+  # Soil Quality DB
   postgres-soil-quality:
     image: postgres:15
     container_name: postgres-soil-quality
     restart: always
     env_file:
       - ./soil-quality-service/dbinit.env
+    volumes:
+      - postgres-soil-quality-data:/var/lib/postgresql/data
+
+  # Production Monitoring DB
+  postgres-production-monitoring:
+    image: postgres:15
+    container_name: postgres-production-monitoring
+    restart: always
+    env_file:
+      - ./production-monitoring-service/dbinit.env
+    volumes:
+      - postgres-production-monitoring-data:/var/lib/postgresql/data
+
   # Alarms DB
   postgres-alarms-notify:
     image: postgres:15
@@ -29,6 +48,9 @@ services:
     restart: always
     env_file:
       - ./alarm-service/dbinit.env
+    volumes:
+      - postgres-alarms-notify-data:/var/lib/postgresql/data
+
   # Air Quality Service
   air-quality-service:
     build:
@@ -58,6 +80,7 @@ services:
       - "4004:4004"
     volumes:
       - ./mqtt-certs:/app/mqtt-certs:ro
+
   # Soil Quality Service
   soil-quality-service:
     build:
@@ -72,6 +95,22 @@ services:
       - "4005:4005"
     volumes:
       - ./mqtt-certs:/app/mqtt-certs:ro
+
+  # Production Monitoring Service
+  production-monitoring-service:
+    build:
+      context: ./production-monitoring-service
+    container_name: production-monitoring-service
+    depends_on:
+      - postgres-production-monitoring
+    env_file:
+      - ./production-monitoring-service/.env
+    ports:
+      - "3006:3006"
+      - "4006:4006"
+    volumes:
+      - ./mqtt-certs:/app/mqtt-certs:ro
+
   # Alarms Service
   alarm-service:
     build:
@@ -86,6 +125,7 @@ services:
       - "4003:4003"
     volumes:
       - ./mqtt-certs:/app/mqtt-certs:ro
+
   # API Gateway
   api-gateway:
     build:
@@ -94,12 +134,15 @@ services:
     depends_on:
       - air-quality-service
       - water-quality-service
+      - soil-quality-service
+      - production-monitoring-service
       - alarm-service
     env_file:
       - ./api-gateway/.env
     ports:
       - "3010:3010"
       - "4000:4000"
+
   # Dashboard FE
   dashboard:
     build:
@@ -111,3 +154,10 @@ services:
       - "3000:3000"
     environment:
       - NEXT_PUBLIC_API_URL=http://api-gateway:3010
+
+volumes:
+  postgres-air-quality-data:
+  postgres-water-quality-data:
+  postgres-soil-quality-data:
+  postgres-production-monitoring-data:
+  postgres-alarms-notify-data:

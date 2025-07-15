@@ -5,9 +5,9 @@ export const ALARM_SEVERITY_LABELS: Record<
   { label: string; color: string }
 > = {
   [AlarmSeverity.LOW]: { label: "Low", color: "#fff" },
-  [AlarmSeverity.MEDIUM]: { label: "Medium", color: "#FFD32C" },
-  [AlarmSeverity.HIGH]: { label: "High", color: "#ff8383" },
-  [AlarmSeverity.CRITICAL]: { label: "Critical", color: "#c675e2" },
+  [AlarmSeverity.MEDIUM]: { label: "Medium", color: "#FFCC66" },
+  [AlarmSeverity.HIGH]: { label: "High", color: "#FF7F50" },
+  [AlarmSeverity.CRITICAL]: { label: "Critical", color: "#8B00FF" },
 };
 
 export const ALARM_PARAMETER_LABELS: Record<

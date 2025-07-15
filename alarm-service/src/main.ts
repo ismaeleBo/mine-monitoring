@@ -24,7 +24,7 @@ async function bootstrap() {
   // ✅ Swagger docs
   const config = new DocumentBuilder()
     .setTitle('Alarm Service API')
-    .setDescription('Servizio per la gestione degli allarmi ambientali')
+    .setDescription('Environmental alarm management service')
     .setVersion('1.0')
     .addTag('alarms')
     .build();
@@ -39,6 +39,6 @@ async function bootstrap() {
   logger.log(
     `Alarm Service HTTP listening on port ${process.env.PORT ?? 3003}`,
   );
-  logger.log(`Alarm Service TCP microservice attivo sulla porta 3002`);
+  logger.log(`Alarm Service TCP microservice running on port 4003`);
 }
 bootstrap();

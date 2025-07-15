@@ -64,7 +64,7 @@ export class MqttService implements OnModuleDestroy {
     this.client.publish(topic, message, {}, (err) => {
       if (err) {
         this.logger.error(
-          `[MQTT] Errore pubblicazione su ${topic}: ${err.message}`,
+          `[MQTT] Pubblication error on ${topic}: ${err.message}`,
         );
       }
     });

@@ -20,3 +20,13 @@ export const soilParameters = [
   { key: "voc", title: "VOC", unit: "ppb" },
   { key: "pb", title: "Pb", unit: "mg/Kg" },
 ];
+
+export const productionParameters = [
+  { key: "loadsMoved", title: "Loads moved", unit: "u/h" },
+  {
+    key: "machineOperatingHours",
+    title: "Machine operating hours",
+    unit: "h/d",
+  },
+  { key: "extractedMaterial", title: "Extracted material", unit: "t/h" },
+];

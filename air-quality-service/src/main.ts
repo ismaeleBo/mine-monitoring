@@ -25,7 +25,7 @@ async function bootstrap() {
   // Swagger configuration for API documentation
   const config = new DocumentBuilder()
     .setTitle('Air Quality Monitoring API')
-    .setDescription("API per il monitoraggio della qualità dell'aria")
+    .setDescription("API for air quality monitoring")
     .setVersion('1.0')
     .addTag('air-quality')
     .build();
@@ -34,7 +34,7 @@ async function bootstrap() {
   SwaggerModule.setup('api', app, document);
 
   await app.startAllMicroservices();
-  logger.log('Microservizi avviati');
+  logger.log('Microservices started');
 
   await app.listen(3002);
   logger.log(`(air-quality) HTTP server running on port 3002`);

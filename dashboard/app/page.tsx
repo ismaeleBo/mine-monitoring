@@ -2,7 +2,7 @@
 
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { WaterQualityDashboard } from "@/components/water-quality/water-quality-dashboard";
-import { TerritorialImpactDashboard } from "@/components/territorial-impact-dashboard";
+import { ProductionMonitoringDashboard } from "@/components/production-monitoring/production-monitoring-dashboard";
 import { AirQualityDashboard } from "@/components/air-quality/air-quality-dashboard";
 import { SoilQualityDashboard } from "@/components/soil-quality/soil-quality-dashboard";
 
@@ -14,7 +14,7 @@ export default function DashboardPage() {
           <TabsTrigger value="air">Air Quality</TabsTrigger>
           <TabsTrigger value="water">Water Quality</TabsTrigger>
           <TabsTrigger value="soil">Soil Quality</TabsTrigger>
-          <TabsTrigger value="territory">Territorial Impact</TabsTrigger>
+          <TabsTrigger value="production">Production Monitoring</TabsTrigger>
         </TabsList>
         <TabsContent value="air" className="border-none p-0 pt-4">
           <AirQualityDashboard />
@@ -25,8 +25,8 @@ export default function DashboardPage() {
         <TabsContent value="soil" className="border-none p-0 pt-4">
           <SoilQualityDashboard />
         </TabsContent>
-        <TabsContent value="territory" className="border-none p-0 pt-4">
-          <TerritorialImpactDashboard />
+        <TabsContent value="production" className="border-none p-0 pt-4">
+          <ProductionMonitoringDashboard />
         </TabsContent>
       </Tabs>
     </div>

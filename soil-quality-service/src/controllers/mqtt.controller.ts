@@ -55,7 +55,7 @@ export class MqttController implements OnModuleInit {
       await validateOrReject(dto);
 
       const saved = await this.soilQualityService.createReading(dto);
-      this.logger.log(`[MQTT] Lettura registrata con ID=${saved.id}`);
+      this.logger.log(`[MQTT] Reading recorded with ID=${saved.id}`);
     } catch (err) {
       const msg = err instanceof Error ? err.message : 'Errore sconosciuto';
       this.logger.error(`[MQTT] Error reading message: ${msg}`);

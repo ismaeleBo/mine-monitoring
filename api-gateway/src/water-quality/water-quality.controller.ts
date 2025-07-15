@@ -91,7 +91,11 @@ export class WaterQualityController {
 
   @Get('/stats/daily-measurements')
   @ApiOperation({ summary: 'Get all readings for a specific day' })
-  @ApiQuery({ name: 'date', required: true })
+  @ApiQuery({
+    name: 'date',
+    required: true,
+    description: 'Date to filter (YYYY-MM-DD)',
+  })
   @ApiQuery({ name: 'location', required: false })
   @ApiResponse({ status: 200 })
   async getDailyMeasurements(

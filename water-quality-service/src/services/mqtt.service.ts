@@ -47,7 +47,7 @@ export class MqttService {
     this.client.subscribe(topic, (err) => {
       if (err) {
         console.error(
-          `[MQTT] Errore nella sottoscrizione al topic ${topic}:`,
+          `[MQTT] Error subscribing to topic: ${topic}:`,
           err.message,
         );
         throw err;

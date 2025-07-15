@@ -17,6 +17,8 @@ It includes services for collecting environmental data, a gateway API, a dashboa
 
 Below is a high-level view of the system architecture, showing the flow of data from edge devices to cloud microservices and the dashboard frontend.
 
+![Architecture Diagram](https://github.com/ismaeleBo/mine-monitoring/blob/master/docs/architecture_overview.png)
+
 ## Services Overview
 
 - **Air Quality Service** – Monitors PM2.5, PM10, CO, NO₂, SO₂, CH₄, and O₂.

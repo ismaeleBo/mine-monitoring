@@ -4,6 +4,8 @@ This repository contains the full source code for a mining site monitoring platf
 The system is designed to collect, process, and visualize environmental and production data from an open-pit mine using a modular microservices architecture.
 It includes services for collecting environmental data, a gateway API, a dashboard front‑end, and a simulator that generates sample readings.
 
+<a href="http://ec2-3-121-214-138.eu-central-1.compute.amazonaws.com/" style="font-size: 22px"><b>VISIT THE MINE</b></a>
+
 ## Features
 
 - Modular architecture based on NestJS microservices and Next.js frontend
